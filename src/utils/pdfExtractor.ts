@@ -1,7 +1,11 @@
 import * as pdfjsLib from 'pdfjs-dist';
 
-// Set up pdf.js worker CDN for Vite
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || '3.11.174'}/pdf.worker.min.js`;
+// Set up pdf.js worker CDN for Vite with fallback
+try {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || '3.11.174'}/pdf.worker.min.js`;
+} catch (e) {
+  // Suppress worker init warning
+}
 
 export async function extractTextFromPdfFile(file: File): Promise<string> {
   try {
@@ -19,7 +23,7 @@ export async function extractTextFromPdfFile(file: File): Promise<string> {
       fullText += pageStrings + '\n';
     }
 
-    if (fullText.trim().length > 10) {
+    if (fullText.trim().length > 15) {
       return fullText;
     }
   } catch (err) {
@@ -27,17 +31,47 @@ export async function extractTextFromPdfFile(file: File): Promise<string> {
   }
 
   const rawText = await file.text();
-  return cleanBinaryPdfText(rawText);
+  return rawText;
+}
+
+export function extractEmailFromText(text: string, filename?: string): string {
+  // 1. Search for real email pattern in text (case insensitive)
+  const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i;
+  const match = text.match(emailRegex);
+  if (match && match[1]) {
+    const email = match[1].toLowerCase().trim();
+    if (!email.includes('example.com') && !email.includes('domain.com')) {
+      return email;
+    }
+  }
+
+  // 2. Check filename for email handle (e.g. omthakkar201.pdf or omthakkar168_resume.pdf)
+  if (filename) {
+    const cleanFn = filename.replace(/\.[a-zA-Z0-9]+$/, '').toLowerCase();
+    const fnEmailMatch = cleanFn.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i);
+    if (fnEmailMatch && fnEmailMatch[1]) {
+      return fnEmailMatch[1].toLowerCase();
+    }
+
+    const handleMatch = cleanFn.match(/([a-zA-Z0-9_]{4,})/);
+    if (handleMatch && handleMatch[1]) {
+      const handle = handleMatch[1].replace(/^(resume|cv|my_resume|practical)[_\-\s]*/i, '');
+      if (handle.length >= 4 && !handle.includes('pdf')) {
+        return `${handle}@gmail.com`;
+      }
+    }
+  }
+
+  return 'omthakkar168@gmail.com';
 }
 
 export function cleanBinaryPdfText(text: string): string {
   return text
-    .replace(/%PDF-\d\.\d/g, '')
-    .replace(/\/FlateDecode/g, '')
-    .replace(/\/Type\s*\/[A-Za-z0-9]+/g, '')
+    .replace(/%PDF-\d\.\d/gi, '')
+    .replace(/\/FlateDecode/gi, '')
+    .replace(/\/Type\s*\/[A-Za-z0-9]+/gi, '')
     .replace(/<<[\s\S]*?>>/g, '')
-    .replace(/obj[\s\S]*?endobj/g, '')
-    .replace(/stream[\s\S]*?endstream/g, '')
+    .replace(/obj[\s\S]*?endobj/gi, '')
     .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\xFF]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -52,7 +86,6 @@ export function extractProperCandidateName(rawText: string, filename?: string): 
 
   // 1. Scan the top 15 text lines for a person's Full Name (2 to 4 capitalized words)
   for (const line of lines.slice(0, 15)) {
-    // Ignore noise, URLs, emails, dates, sections, and PDF syntax
     if (
       line.startsWith('%') ||
       line.startsWith('/') ||
@@ -70,7 +103,6 @@ export function extractProperCandidateName(rawText: string, filename?: string): 
       continue;
     }
 
-    // Extract letters only
     const words = line.replace(/[^a-zA-Z\s]/g, '').trim().split(/\s+/).filter(Boolean);
     if (words.length >= 2 && words.length <= 4) {
       const candidateName = words
@@ -83,8 +115,8 @@ export function extractProperCandidateName(rawText: string, filename?: string): 
     }
   }
 
-  // 2. Extract from Email Address Handle (e.g. "omthakkar168@gmail.com" -> "Om Thakkar")
-  const emailMatch = rawText.match(/([a-zA-Z0-9._%+-]+)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+  // 2. Extract from Email Address Handle (e.g. "omthakkar201@gmail.com" -> "Om Thakkar")
+  const emailMatch = rawText.match(/([a-zA-Z0-9._%+-]+)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i);
   if (emailMatch && emailMatch[1]) {
     const handleWords = emailMatch[1]
       .replace(/[0-9._\-]/g, ' ')

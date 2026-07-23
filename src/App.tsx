@@ -85,6 +85,19 @@ export function App() {
     }
   };
 
+  const handleUpdateCandidateEmail = (newEmail: string) => {
+    if (candidateProfile) {
+      const updatedProfile = { ...candidateProfile, email: newEmail };
+      setCandidateProfile(updatedProfile);
+      if (atsAnalysis) {
+        const updatedMatches = matchResumeWithJobs(updatedProfile);
+        setJobMatches(updatedMatches);
+        const updatedSaved = saveCandidateRecord(updatedProfile, atsAnalysis, updatedMatches);
+        setSavedCandidates(updatedSaved);
+      }
+    }
+  };
+
   const handleSelectJobForInterview = (match: JobMatchResult) => {
     setSelectedJobForInterview(match.job);
     setActiveTab('interview');
@@ -130,6 +143,7 @@ export function App() {
             onSaveCandidate={handleSaveCandidate}
             onDeleteCandidate={handleDeleteCandidate}
             onUpdateCandidateName={handleUpdateCandidateName}
+            onUpdateCandidateEmail={handleUpdateCandidateEmail}
           />
         )}
 

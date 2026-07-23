@@ -1,5 +1,5 @@
 import type { CandidateProfile, ATSAnalysis } from '../types/resume';
-import { extractProperCandidateName, cleanBinaryPdfText } from './pdfExtractor';
+import { extractProperCandidateName, extractEmailFromText, cleanBinaryPdfText } from './pdfExtractor';
 
 const KNOWN_SKILLS = [
   'React', 'React.js', 'Next.js', 'TypeScript', 'JavaScript', 'Node.js', 'Express', 'Express.js',
@@ -20,18 +20,25 @@ const ACTION_VERBS = [
   'managed', 'led', 'scaled', 'delivered', 'integrated', 'streamlined', 'transformed'
 ];
 
+const PDF_NOISE_WORDS = new Set([
+  'EOF', 'PDF', 'FlateDecode', 'Filter', 'Width', 'Height', 'Length', 'Subtype', 'Type',
+  'MediaBox', 'ProcSet', 'ColorSpace', 'Resources', 'Contents', 'Font', 'Parent', 'Page',
+  'Pages', 'Catalog', 'Outlines', 'Encoding', 'Root', 'Info', 'CreationDate', 'ModDate',
+  'Producer', 'Stream', 'Endstream', 'Obj', 'Endobj', 'Trailer', 'XRef', 'BitsPerComponent'
+]);
+
 export function parseResumeText(text: string, filename?: string): CandidateProfile {
   // Clean raw PDF binary noise if present
   const cleanedText = text.includes('%PDF') ? cleanBinaryPdfText(text) : text;
   const normalizedText = cleanedText.replace(/\r\n/g, '\n');
 
   // Extract Proper Candidate Name
-  const name = extractProperCandidateName(normalizedText, filename);
+  const name = extractProperCandidateName(text, filename);
 
-  // Extract Email & Phone
-  const emailMatch = text.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
-  const email = emailMatch ? emailMatch[1] : 'candidate@example.com';
+  // Extract Email Address (robust multi-stage search)
+  const email = extractEmailFromText(text, filename);
 
+  // Extract Phone Number
   const phoneMatch = text.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
   const phone = phoneMatch ? phoneMatch[0] : '+1 (555) 019-2834';
 
@@ -51,14 +58,15 @@ export function parseResumeText(text: string, filename?: string): CandidateProfi
         w.length < 20 && 
         !w.startsWith('/') && 
         !w.startsWith('%') &&
-        !['Resume', 'Experience', 'Education', 'Summary', 'Skills', 'Email', 'Phone', 'Type', 'Parent', 'Page', 'Font'].includes(w)
+        !PDF_NOISE_WORDS.has(w) &&
+        !['Resume', 'Experience', 'Education', 'Summary', 'Skills', 'Email', 'Phone'].includes(w)
       ) {
         detectedSkillsSet.add(w);
       }
     });
   }
 
-  const skills = Array.from(detectedSkillsSet);
+  const skills = Array.from(detectedSkillsSet).filter(s => !PDF_NOISE_WORDS.has(s));
 
   let experienceYears = 1;
   const yearMatches = text.match(/\b(19\d\d|20\d\d)\b/g);

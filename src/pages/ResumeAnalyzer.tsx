@@ -17,6 +17,7 @@ interface ResumeAnalyzerProps {
   onSaveCandidate: () => void;
   onDeleteCandidate: (id: string) => void;
   onUpdateCandidateName: (newName: string) => void;
+  onUpdateCandidateEmail: (newEmail: string) => void;
 }
 
 export const ResumeAnalyzerPage: React.FC<ResumeAnalyzerProps> = ({
@@ -28,12 +29,17 @@ export const ResumeAnalyzerPage: React.FC<ResumeAnalyzerProps> = ({
   onSelectPreset,
   onSaveCandidate,
   onDeleteCandidate,
-  onUpdateCandidateName
+  onUpdateCandidateName,
+  onUpdateCandidateEmail
 }) => {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
+  
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('');
+
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [emailInput, setEmailInput] = useState('');
 
   const topMatch = jobMatches[0];
   const finalResult = topMatch ? topMatch.finalResult : 'PASS (NEEDS IMPROVEMENT)';
@@ -56,6 +62,20 @@ export const ResumeAnalyzerPage: React.FC<ResumeAnalyzerProps> = ({
       onUpdateCandidateName(nameInput.trim());
     }
     setIsEditingName(false);
+  };
+
+  const handleStartEditingEmail = () => {
+    if (candidateProfile) {
+      setEmailInput(candidateProfile.email);
+      setIsEditingEmail(true);
+    }
+  };
+
+  const handleSaveEmail = () => {
+    if (emailInput.trim().length > 0) {
+      onUpdateCandidateEmail(emailInput.trim());
+    }
+    setIsEditingEmail(false);
   };
 
   return (
@@ -162,10 +182,43 @@ export const ResumeAnalyzerPage: React.FC<ResumeAnalyzerProps> = ({
               <span className="text-slate-400 block font-medium">Candidate Name</span>
               <span className="font-bold text-white text-sm mt-0.5 block">{candidateProfile.name}</span>
             </div>
+
+            {/* Editable Contact Email */}
             <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
-              <span className="text-slate-400 block font-medium">Contact Email & Phone</span>
-              <span className="font-semibold text-slate-200 mt-0.5 block">{candidateProfile.email}</span>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 block font-medium">Contact Email & Phone</span>
+                <button
+                  onClick={handleStartEditingEmail}
+                  className="text-[10px] text-sky-400 hover:text-sky-300 font-semibold flex items-center gap-0.5"
+                >
+                  <Edit3 className="w-3 h-3" /> Edit Email
+                </button>
+              </div>
+
+              {!isEditingEmail ? (
+                <span className="font-semibold text-slate-200 mt-0.5 block truncate">
+                  {candidateProfile.email}
+                </span>
+              ) : (
+                <div className="flex items-center gap-1.5 mt-1">
+                  <input
+                    type="email"
+                    value={emailInput}
+                    onChange={(e) => setEmailInput(e.target.value)}
+                    placeholder="Enter email..."
+                    className="px-2 py-1 bg-slate-950 border border-sky-500 rounded text-xs text-white focus:outline-none w-full font-mono"
+                    autoFocus
+                  />
+                  <button
+                    onClick={handleSaveEmail}
+                    className="px-2 py-1 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-[10px] rounded shrink-0"
+                  >
+                    Save
+                  </button>
+                </div>
+              )}
             </div>
+
             <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
               <span className="text-slate-400 block font-medium">Professional Title</span>
               <span className="font-bold text-sky-400 mt-0.5 block">{candidateProfile.title}</span>
