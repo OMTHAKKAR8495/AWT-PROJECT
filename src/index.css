@@ -103,10 +103,11 @@
 .light {
   --color-bg-dark: #f8fafc;
   --color-bg-surface: #ffffff;
-  --color-bg-card: rgba(255, 255, 255, 0.85);
-  --color-border: rgba(15, 23, 42, 0.1);
+  --color-bg-card: rgba(255, 255, 255, 0.95);
+  --color-border: rgba(15, 23, 42, 0.12);
   --color-border-hover: var(--color-primary);
-  --color-glow: rgba(139, 92, 246, 0.15);
+  --color-glow: rgba(139, 92, 246, 0.12);
+  --color-text-gradient: linear-gradient(135deg, #6b21a8 0%, #0284c7 50%, #4338ca 100%);
 }
 
 @layer base {
@@ -118,8 +119,61 @@
 }
 
 .light body {
-  background-color: var(--color-bg-dark);
+  background-color: #f8fafc;
   color: #0f172a;
+}
+
+/* Light Mode Contrast & Font Color Overrides */
+.light .text-white,
+.light .text-slate-100,
+.light .text-slate-200 {
+  color: #0f172a !important;
+}
+
+.light .text-slate-300 {
+  color: #334155 !important;
+}
+
+.light .text-slate-400 {
+  color: #475569 !important;
+}
+
+.light .text-slate-500 {
+  color: #64748b !important;
+}
+
+.light .bg-slate-950,
+.light .bg-slate-900,
+.light .bg-slate-900\/90,
+.light .bg-slate-900\/80,
+.light .bg-slate-900\/60,
+.light .bg-slate-900\/40 {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.light .bg-slate-800,
+.light .bg-slate-800\/80 {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+.light .border-slate-800,
+.light .border-slate-700 {
+  border-color: #cbd5e1 !important;
+}
+
+.light input,
+.light textarea,
+.light select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+.light input::placeholder,
+.light textarea::placeholder {
+  color: #94a3b8 !important;
 }
 
 /* Custom Scrollbar */
@@ -152,11 +206,11 @@
 }
 
 .light .glass-panel {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--color-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
 }
 
 .glass-card {
@@ -173,8 +227,8 @@
 }
 
 .light .glass-card {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(15, 23, 42, 0.12);
 }
 
 .light .glass-card:hover {
@@ -190,7 +244,7 @@
 
 .theme-btn-primary {
   background: var(--color-btn-gradient);
-  color: #ffffff;
+  color: #ffffff !important;
   transition: all 0.3s ease;
   box-shadow: 0 4px 20px var(--color-glow);
 }
