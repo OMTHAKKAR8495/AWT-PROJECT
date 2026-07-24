@@ -6,7 +6,7 @@ import {
   getCandidateById,
   updateCandidate,
   deleteCandidate
-} from '../controllers/candidateController.js';
+} from '../controllers/candidateController';
 
 const upload = multer({ storage: multer.memoryStorage() });
 const router = Router();

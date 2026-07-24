@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { Candidate } from '../models/Candidate.js';
-import { parseAndEvaluateResume } from '../utils/resumeAnalyzer.js';
+import { Candidate } from '../models/Candidate';
+import { parseAndEvaluateResume } from '../utils/resumeAnalyzer';
 import pdfParse from 'pdf-parse';
 
 export const parseResumeAndSave = async (req: Request, res: Response) => {
