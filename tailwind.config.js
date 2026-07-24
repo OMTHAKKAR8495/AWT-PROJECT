@@ -4,54 +4,50 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         brand: {
-          50: '#f0f4ff',
-          100: '#e0e9fe',
+          50: '#f0f7ff',
+          100: '#e0effe',
           200: '#bae0fd',
-          300: '#7cc5fb',
-          400: '#36a7f7',
-          500: '#0c8ae9',
-          600: '#026dc7',
-          700: '#0357a1',
-          800: '#074a83',
-          900: '#0c3e6d',
-          950: '#082748',
+          300: '#7cc7fd',
+          400: '#36a9fa',
+          500: '#0c8de9',
+          600: '#006ec7',
+          700: '#0158a3',
+          800: '#064b86',
+          900: '#0b3f6f',
+          950: '#07284a',
         },
-        accent: {
-          50: '#fdf2f8',
-          100: '#fce7f3',
-          200: '#fbcfe8',
-          300: '#f7a8d0',
-          400: '#f16ea9',
-          500: '#e53e85',
-          600: '#d01e68',
-          700: '#b0124e',
-          800: '#921343',
-          900: '#7a143b',
+        gold: {
+          400: '#fbbf24',
+          500: '#f59e0b',
+          600: '#d97706',
         },
-        darkBg: '#0b0f19',
-        darkCard: 'rgba(17, 24, 39, 0.75)',
-        darkBorder: 'rgba(255, 255, 255, 0.1)',
+        slate: {
+          850: '#151e2e',
+          950: '#090d16',
+        }
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
       },
       animation: {
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'float': 'float 6s ease-in-out infinite',
-        'glow': 'glow 2s ease-in-out infinite alternate',
+        'shimmer': 'shimmer 2.5s infinite linear',
       },
       keyframes: {
         float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
+          '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
         },
-        glow: {
-          '0%': { boxShadow: '0 0 15px rgba(12, 138, 233, 0.4)' },
-          '100%': { boxShadow: '0 0 30px rgba(12, 138, 233, 0.8)' },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
         }
       }
     },

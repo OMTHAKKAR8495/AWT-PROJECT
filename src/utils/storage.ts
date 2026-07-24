@@ -1,92 +1,62 @@
 import type { SavedCandidateRecord, CandidateProfile, ATSAnalysis, JobMatchResult } from '../types/resume';
-import { SAMPLE_RESUMES } from '../data/sampleResumes';
-import { evaluateATS } from './resumeParser';
-import { matchResumeWithJobs } from './jobMatcher';
 
-const STORAGE_KEY = 'careermatch_saved_candidates_v1';
+const STORAGE_KEY = 'nexus_saved_candidates_db';
 
 export function getSavedCandidates(): SavedCandidateRecord[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
-    }
-  } catch (e) {
-    console.error('Failed to read saved candidates from localStorage:', e);
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error('Failed reading saved candidates from localStorage:', err);
+    return [];
   }
-
-  // Pre-seed default candidates if none stored yet
-  const defaultRecords: SavedCandidateRecord[] = Object.values(SAMPLE_RESUMES).map(prof => {
-    const ats = evaluateATS(prof);
-    const matches = matchResumeWithJobs(prof);
-    const topMatch = matches[0];
-    const finalResult = topMatch ? topMatch.finalResult : 'PASS (NEEDS IMPROVEMENT)';
-
-    return {
-      id: `cand-${prof.name.toLowerCase().replace(/\s+/g, '-')}`,
-      candidateName: prof.name,
-      profile: prof,
-      ats,
-      jobMatches: matches,
-      finalResult,
-      savedAt: new Date().toLocaleDateString()
-    };
-  });
-
-  saveCandidatesList(defaultRecords);
-  return defaultRecords;
 }
 
 export function saveCandidateRecord(
   profile: CandidateProfile,
   ats: ATSAnalysis,
-  matches: JobMatchResult[]
+  jobMatches: JobMatchResult[]
 ): SavedCandidateRecord[] {
-  const currentList = getSavedCandidates();
-  const topMatch = matches[0];
+  const existing = getSavedCandidates();
+  const topMatch = jobMatches[0];
   const finalResult = topMatch ? topMatch.finalResult : 'PASS (NEEDS IMPROVEMENT)';
 
   const newRecord: SavedCandidateRecord = {
-    id: `cand-${Date.now()}`,
-    candidateName: profile.name,
+    id: 'cand-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+    candidateName: profile.name || 'Candidate',
     profile,
     ats,
-    jobMatches: matches,
+    jobMatches,
     finalResult,
-    savedAt: new Date().toLocaleDateString()
+    savedAt: new Date().toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
   };
 
-  // Replace existing record if candidate with same name exists, else append
-  const existingIdx = currentList.findIndex(
-    r => r.candidateName.toLowerCase() === profile.name.toLowerCase()
-  );
+  const filtered = existing.filter(c => c.candidateName.toLowerCase() !== profile.name.toLowerCase());
+  const updated = [newRecord, ...filtered];
 
-  let updatedList: SavedCandidateRecord[] = [];
-  if (existingIdx >= 0) {
-    updatedList = [...currentList];
-    updatedList[existingIdx] = newRecord;
-  } else {
-    updatedList = [newRecord, ...currentList];
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  } catch (e) {
+    console.error('Failed saving candidate to localStorage:', e);
   }
 
-  saveCandidatesList(updatedList);
-  return updatedList;
+  return updated;
 }
 
 export function deleteCandidateRecord(id: string): SavedCandidateRecord[] {
-  const currentList = getSavedCandidates();
-  const updatedList = currentList.filter(r => r.id !== id);
-  saveCandidatesList(updatedList);
-  return updatedList;
-}
-
-function saveCandidatesList(list: SavedCandidateRecord[]) {
+  const existing = getSavedCandidates();
+  const updated = existing.filter(c => c.id !== id);
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   } catch (e) {
-    console.error('Failed to save candidates to localStorage:', e);
+    console.error('Failed deleting candidate record:', e);
   }
+  return updated;
 }

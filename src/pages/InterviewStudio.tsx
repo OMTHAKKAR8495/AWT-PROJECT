@@ -2,17 +2,17 @@ import React from 'react';
 import type { CandidateProfile, JobRole } from '../types/resume';
 import { InterviewPrep } from '../components/InterviewPrep';
 
-interface InterviewStudioProps {
+interface InterviewStudioPageProps {
   candidateProfile: CandidateProfile;
   selectedJob?: JobRole;
 }
 
-export const InterviewStudioPage: React.FC<InterviewStudioProps> = ({
+export const InterviewStudioPage: React.FC<InterviewStudioPageProps> = ({
   candidateProfile,
   selectedJob
 }) => {
   return (
-    <div className="animate-in fade-in duration-300">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <InterviewPrep
         candidateProfile={candidateProfile}
         selectedJob={selectedJob}

@@ -1,87 +1,61 @@
 import React from 'react';
-import { Target, TrendingUp, Sparkles, Award } from 'lucide-react';
-import type { CandidateProfile, JobMatchResult } from '../types/resume';
+import type { JobMatchResult } from '../types/resume';
 
 interface SkillGapChartProps {
-  candidateProfile: CandidateProfile;
-  matches: JobMatchResult[];
+  jobMatches: JobMatchResult[];
 }
 
-export const SkillGapChart: React.FC<SkillGapChartProps> = ({
-  candidateProfile,
-  matches
-}) => {
-  const topMatches = matches.slice(0, 3);
-  const missingMap: Record<string, number> = {};
+export const SkillGapChart: React.FC<SkillGapChartProps> = ({ jobMatches }) => {
+  const missingSkillFrequency: Record<string, number> = {};
 
-  topMatches.forEach(m => {
-    m.missingRequiredSkills.concat(m.missingPreferredSkills).forEach(skill => {
-      missingMap[skill] = (missingMap[skill] || 0) + 1;
+  jobMatches.forEach(match => {
+    match.missingRequiredSkills.forEach(skill => {
+      missingSkillFrequency[skill] = (missingSkillFrequency[skill] || 0) + 1;
     });
   });
 
-  const recommendedSkillsToLearn = Object.entries(missingMap)
+  const sortedGaps = Object.entries(missingSkillFrequency)
     .sort((a, b) => b[1] - a[1])
-    .map(entry => entry[0]);
+    .slice(0, 5);
+
+  if (sortedGaps.length === 0) {
+    return (
+      <div className="glass-panel rounded-2xl p-6 border border-[var(--color-border)] text-center text-xs text-slate-400">
+        🎉 Phenomenal Skill Coverage! No critical skill gaps identified across target positions.
+      </div>
+    );
+  }
 
   return (
-    <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-6">
-      
+    <div className="glass-panel rounded-2xl p-6 border border-[var(--color-border)] space-y-4">
       <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <Target className="w-5 h-5 text-sky-400" />
-            Skill Gap & Market Demand Analytics
-          </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Automated analysis of your current skill matrix vs. target enterprise roles.
-          </p>
-        </div>
+        <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+          Top Identified Skill Gaps Across Market
+        </h3>
+        <span className="text-[10px] text-slate-400 bg-[var(--color-bg-dark)] px-2.5 py-1 rounded-full border border-[var(--color-border)]">
+          Actionable Career Upgrades
+        </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        <div className="bg-slate-900/60 p-5 rounded-xl border border-slate-800/80">
-          <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2 mb-3">
-            <Award className="w-4 h-4" /> Validated Technical Skills ({candidateProfile.skills.length})
-          </h4>
-          <div className="flex flex-wrap gap-2">
-            {candidateProfile.skills.map(skill => (
-              <span
-                key={skill}
-                className="px-3 py-1 text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 rounded-lg"
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-slate-900/60 p-5 rounded-xl border border-slate-800/80">
-          <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2 mb-3">
-            <TrendingUp className="w-4 h-4" /> Recommended Next Skills to Learn
-          </h4>
-          {recommendedSkillsToLearn.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {recommendedSkillsToLearn.map(skill => (
-                <span
-                  key={skill}
-                  className="px-3 py-1 text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-lg flex items-center gap-1.5"
-                >
-                  <Sparkles className="w-3 h-3 text-amber-400" />
-                  {skill}
-                </span>
-              ))}
+      <div className="space-y-3">
+        {sortedGaps.map(([skill, count]) => {
+          const percentage = Math.round((count / Math.max(jobMatches.length, 1)) * 100);
+          return (
+            <div key={skill} className="space-y-1">
+              <div className="flex justify-between text-xs">
+                <span className="font-semibold text-slate-200">{skill}</span>
+                <span className="text-amber-400 font-bold">Missing in {count} Jobs ({percentage}%)</span>
+              </div>
+              <div className="h-2 bg-[var(--color-bg-dark)] rounded-full overflow-hidden border border-[var(--color-border)]">
+                <div
+                  className="h-full bg-gradient-to-r from-amber-500 to-rose-500 transition-all duration-500"
+                  style={{ width: `${percentage}%` }}
+                />
+              </div>
             </div>
-          ) : (
-            <p className="text-xs text-emerald-400 font-semibold">
-              🎉 Outstanding! Your skill portfolio matches all required technologies in the job directory!
-            </p>
-          )}
-        </div>
-
+          );
+        })}
       </div>
-
     </div>
   );
 };

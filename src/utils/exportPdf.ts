@@ -6,11 +6,9 @@ export function generatePDFReport(
   ats: ATSAnalysis,
   matches: JobMatchResult[]
 ) {
-  // Always single page A4 (210mm x 297mm)
   const doc = new jsPDF();
   const topMatch = matches[0];
   
-  // Clean Candidate Name
   let candidateName = profile.name || 'Candidate Profile';
   if (candidateName.startsWith('%PDF') || candidateName.includes('%PDF') || candidateName.length < 2) {
     candidateName = 'Candidate Profile';
@@ -18,14 +16,14 @@ export function generatePDFReport(
   const candidateNameUpper = candidateName.toUpperCase();
   const overallResult = topMatch ? topMatch.finalResult : 'PASS (NEEDS IMPROVEMENT)';
 
-  // 1. Dark Header Banner (Compact Height: 30mm)
+  // 1. Dark Header Banner
   doc.setFillColor(8, 12, 20);
   doc.rect(0, 0, 210, 32, 'F');
 
-  doc.setTextColor(56, 189, 248); // Sky blue
+  doc.setTextColor(56, 189, 248);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(15);
-  doc.text('CAREERMATCH AI - RESUME EVALUATION REPORT', 14, 14);
+  doc.text('NEXUS AI - RESUME EVALUATION REPORT', 14, 14);
 
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(11);
@@ -37,7 +35,7 @@ export function generatePDFReport(
 
   let y = 39;
 
-  // 2. Candidate Overview & Scanned Metrics (Compact Height)
+  // 2. Candidate Overview & Scanned Metrics
   doc.setTextColor(15, 23, 42);
   doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
@@ -83,7 +81,7 @@ export function generatePDFReport(
   doc.text(ats.improvements.slice(0, 2).map(i => `- ${i}`).join('  |  '), 42, y);
   y += 9;
 
-  // 4. Company-Specific Job Eligibility Matrix (Compact 3 Roles)
+  // 4. Company-Specific Job Eligibility Matrix
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
   doc.text('3. COMPANY JOB MATCH & ELIGIBILITY MATRIX', 14, y);
@@ -99,11 +97,11 @@ export function generatePDFReport(
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8.5);
     if (m.finalResult === 'PASS (SELECTED)') {
-      doc.setTextColor(16, 185, 129); // Green
+      doc.setTextColor(16, 185, 129);
     } else if (m.finalResult === 'PASS (NEEDS IMPROVEMENT)') {
-      doc.setTextColor(217, 119, 6); // Amber
+      doc.setTextColor(217, 119, 6);
     } else {
-      doc.setTextColor(220, 38, 38); // Red
+      doc.setTextColor(220, 38, 38);
     }
     doc.text(`► DECISION: ${m.finalResult}`, 18, y);
 
@@ -124,8 +122,8 @@ export function generatePDFReport(
 
   y += 3;
 
-  // 5. Final Selection Result Banner at End of Report (Guaranteed on Page 1)
-  doc.setFillColor(15, 23, 42); // Dark Box
+  // 5. Final Selection Result Banner at End of Report
+  doc.setFillColor(15, 23, 42);
   doc.rect(14, y, 182, 32, 'F');
 
   doc.setTextColor(56, 189, 248);
@@ -172,7 +170,7 @@ export function generatePDFReport(
   // Footer on Page 1
   doc.setFontSize(7.5);
   doc.setTextColor(130, 130, 130);
-  doc.text(`CareerMatch AI Official Report | Candidate: ${candidateName} | Advanced Web Technology Project`, 14, 287);
+  doc.text(`Nexus Dynamics AI Official Report | Candidate: ${candidateName}`, 14, 287);
 
   doc.save(`${candidateName.replace(/\s+/g, '_')}_Career_Eligibility_Report.pdf`);
 }

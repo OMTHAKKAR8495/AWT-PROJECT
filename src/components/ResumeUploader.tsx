@@ -98,16 +98,15 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({
   };
 
   return (
-    <div className="glass-panel rounded-2xl p-6 sm:p-8 border border-slate-800 relative overflow-hidden">
+    <div className="glass-panel rounded-2xl p-6 sm:p-8 border border-[var(--color-border)] relative overflow-hidden">
       
-      <div className="absolute top-0 right-0 -mr-20 -mt-20 w-72 h-72 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 -mr-20 -mt-20 w-72 h-72 bg-[var(--color-glow)] rounded-full blur-3xl pointer-events-none" />
 
       {isAnalyzing && (
-        <div className="absolute inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 space-y-6 text-center animate-in fade-in duration-200">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-500 p-0.5 shadow-2xl shadow-sky-500/40 animate-spin">
-            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-              <Cpu className="w-8 h-8 text-sky-400" />
+        <div className="absolute inset-0 z-50 bg-[var(--color-bg-dark)]/95 backdrop-blur-md flex flex-col items-center justify-center p-6 space-y-6 text-center animate-in fade-in duration-200">
+          <div className="w-16 h-16 rounded-2xl theme-btn-primary p-0.5 shadow-2xl animate-spin">
+            <div className="w-full h-full bg-[var(--color-bg-dark)] rounded-[14px] flex items-center justify-center">
+              <Cpu className="w-8 h-8 text-[var(--color-accent)]" />
             </div>
           </div>
 
@@ -120,15 +119,15 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({
           </div>
 
           <div className="grid grid-cols-3 gap-4 w-full max-w-md">
-            <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl text-center">
+            <div className="p-3 bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-xl text-center">
               <span className="text-[10px] text-slate-400 uppercase font-bold block">Words Scanned</span>
-              <span className="text-xl font-black text-sky-400 mt-0.5 block">{counterWords}+</span>
+              <span className="text-xl font-black text-[var(--color-accent)] mt-0.5 block">{counterWords}+</span>
             </div>
-            <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl text-center">
+            <div className="p-3 bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-xl text-center">
               <span className="text-[10px] text-slate-400 uppercase font-bold block">Skills Extracted</span>
               <span className="text-xl font-black text-emerald-400 mt-0.5 block">{counterSkills}</span>
             </div>
-            <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl text-center">
+            <div className="p-3 bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-xl text-center">
               <span className="text-[10px] text-slate-400 uppercase font-bold block">Jobs Checked</span>
               <span className="text-xl font-black text-purple-400 mt-0.5 block">{counterJobs}</span>
             </div>
@@ -139,7 +138,7 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <FileCheck className="w-6 h-6 text-sky-400" />
+            <FileCheck className="w-6 h-6 text-[var(--color-accent)]" />
             Resume Upload & Intelligent Analyzer
           </h2>
           <p className="text-sm text-slate-400 mt-1">
@@ -147,12 +146,12 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+        <div className="flex items-center bg-[var(--color-bg-surface)] p-1 rounded-xl border border-[var(--color-border)]">
           <button
             onClick={() => setActiveInputTab('upload')}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               activeInputTab === 'upload'
-                ? 'bg-sky-500 text-slate-950 font-bold shadow-md shadow-sky-500/20'
+                ? 'theme-btn-primary font-bold shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -162,7 +161,7 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({
             onClick={() => setActiveInputTab('paste')}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               activeInputTab === 'paste'
-                ? 'bg-sky-500 text-slate-950 font-bold shadow-md shadow-sky-500/20'
+                ? 'theme-btn-primary font-bold shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -172,7 +171,7 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({
             onClick={() => setActiveInputTab('preset')}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               activeInputTab === 'preset'
-                ? 'bg-sky-500 text-slate-950 font-bold shadow-md shadow-sky-500/20'
+                ? 'theme-btn-primary font-bold shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -189,8 +188,8 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({
           onClick={() => fileInputRef.current?.click()}
           className={`border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition-all duration-300 ${
             dragActive
-              ? 'border-sky-400 bg-sky-500/10 scale-[1.01]'
-              : 'border-slate-700/80 hover:border-sky-500/50 bg-slate-900/40 hover:bg-slate-900/70'
+              ? 'border-[var(--color-accent)] bg-[var(--color-badge-bg)] scale-[1.01]'
+              : 'border-[var(--color-border)] hover:border-[var(--color-accent)] bg-[var(--color-bg-dark)]/40 hover:bg-[var(--color-bg-dark)]/70'
           }`}
         >
           <input
@@ -205,7 +204,7 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({
             }}
           />
 
-          <div className="w-16 h-16 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center mx-auto mb-4 text-sky-400 shadow-inner">
+          <div className="w-16 h-16 rounded-2xl bg-[var(--color-badge-bg)] border border-[var(--color-badge-border)] flex items-center justify-center mx-auto mb-4 text-[var(--color-accent)] shadow-inner">
             <UploadCloud className="w-8 h-8" />
           </div>
 
@@ -216,8 +215,8 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({
             Supports PDF, DOCX, or TXT format. Automated parsing will extract candidate name, technical skills, and eligibility.
           </p>
 
-          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700">
-            <FileText className="w-4 h-4 text-sky-400" />
+          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-bg-surface)] hover:bg-white/10 text-slate-200 text-xs font-semibold rounded-xl border border-[var(--color-border)]">
+            <FileText className="w-4 h-4 text-[var(--color-accent)]" />
             Browse File from Computer
           </div>
         </div>
@@ -229,12 +228,12 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({
             value={pastedText}
             onChange={(e) => setPastedText(e.target.value)}
             placeholder="Paste raw resume text, work history, or LinkedIn bio here..."
-            className="w-full h-44 p-4 bg-slate-900/80 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 font-mono"
+            className="w-full h-44 p-4 bg-[var(--color-bg-dark)] border border-[var(--color-border)] rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-[var(--color-accent)] font-mono"
           />
           <button
             onClick={handlePasteSubmit}
             disabled={!pastedText.trim()}
-            className="w-full py-3 bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-400 hover:to-indigo-400 text-slate-950 font-bold text-sm rounded-xl shadow-lg shadow-sky-500/20 disabled:opacity-50 transition-all"
+            className="w-full py-3 theme-btn-primary font-bold text-sm rounded-xl shadow-lg disabled:opacity-50 transition-all"
           >
             Analyze Pasted Resume Text
           </button>
@@ -251,21 +250,21 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({
             <div
               key={item.key}
               onClick={() => handlePresetClick(item.profile)}
-              className="glass-panel p-5 rounded-xl border border-slate-800 hover:border-sky-500/60 cursor-pointer transition-all duration-300 hover:-translate-y-1 group"
+              className="glass-panel p-5 rounded-xl border border-[var(--color-border)] hover:border-[var(--color-accent)] cursor-pointer transition-all duration-300 hover:-translate-y-1 group"
             >
               <div className="flex items-center justify-between mb-3">
                 <span className={`px-2.5 py-1 text-[10px] font-bold text-white rounded-full bg-gradient-to-r ${item.color}`}>
                   {item.tag}
                 </span>
-                <UserCheck className="w-4 h-4 text-slate-500 group-hover:text-sky-400 transition-colors" />
+                <UserCheck className="w-4 h-4 text-slate-500 group-hover:text-[var(--color-accent)] transition-colors" />
               </div>
-              <h4 className="font-bold text-white text-sm group-hover:text-sky-400 transition-colors">
+              <h4 className="font-bold text-white text-sm group-hover:text-[var(--color-accent)] transition-colors">
                 {item.profile.name}
               </h4>
               <p className="text-xs text-slate-400 mt-0.5">{item.profile.title}</p>
               <div className="mt-3 flex flex-wrap gap-1">
                 {item.profile.skills.slice(0, 4).map(s => (
-                  <span key={s} className="px-2 py-0.5 text-[10px] bg-slate-800 text-slate-300 rounded border border-slate-700">
+                  <span key={s} className="px-2 py-0.5 text-[10px] bg-[var(--color-bg-dark)] text-slate-300 rounded border border-[var(--color-border)]">
                     {s}
                   </span>
                 ))}
@@ -276,9 +275,9 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({
       )}
 
       {currentProfile && (
-        <div className="mt-6 p-4 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-between">
+        <div className="mt-6 p-4 rounded-xl bg-[var(--color-badge-bg)] border border-[var(--color-badge-border)] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-base">
+            <div className="w-10 h-10 rounded-xl theme-btn-primary text-white flex items-center justify-center font-bold text-base">
               {currentProfile.name.charAt(0)}
             </div>
             <div>
@@ -296,7 +295,7 @@ export const ResumeUploader: React.FC<ResumeUploaderProps> = ({
 
           <div className="hidden sm:flex items-center gap-2">
             <span className="text-xs text-slate-400">Experience:</span>
-            <span className="text-xs font-bold text-sky-400 bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-800">
+            <span className="text-xs font-bold text-[var(--color-accent)] bg-[var(--color-bg-surface)] px-2.5 py-1 rounded-lg border border-[var(--color-border)]">
               ~{currentProfile.experienceYears} Years
             </span>
           </div>

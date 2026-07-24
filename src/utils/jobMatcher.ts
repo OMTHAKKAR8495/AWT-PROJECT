@@ -56,7 +56,6 @@ export function matchResumeWithJobs(
     else if (matchPercentage >= 65) matchLevel = 'Good Fit';
     else if (matchPercentage >= 45) matchLevel = 'Potential Fit';
 
-    // Build Criteria Checklist
     const criteriaChecklist = [
       {
         criterion: `Experience Criteria (${job.experienceYears}+ years required)`,
@@ -72,7 +71,6 @@ export function matchResumeWithJobs(
       }
     ];
 
-    // Determine Official Company Eligibility & Final Pass/Fail Result
     let eligibilityStatus: JobMatchResult['eligibilityStatus'] = 'NEEDS SKILL UPGRADE';
     let finalResult: FinalResultStatus = 'FAIL (NOT ELIGIBLE)';
 

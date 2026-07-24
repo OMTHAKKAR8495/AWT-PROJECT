@@ -1,41 +1,16 @@
-import * as pdfjsLib from 'pdfjs-dist';
-
-// Set up pdf.js worker CDN for Vite with fallback
-try {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || '3.11.174'}/pdf.worker.min.js`;
-} catch (e) {
-  // Suppress worker init warning
-}
-
 export async function extractTextFromPdfFile(file: File): Promise<string> {
   try {
-    const arrayBuffer = await file.arrayBuffer();
-    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-    const pdf = await loadingTask.promise;
-
-    let fullText = '';
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-      const page = await pdf.getPage(pageNum);
-      const textContent = await page.getTextContent();
-      const pageStrings = textContent.items
-        .map((item: any) => item.str || '')
-        .join(' ');
-      fullText += pageStrings + '\n';
-    }
-
-    if (fullText.trim().length > 15) {
-      return fullText;
+    const rawText = await file.text();
+    if (rawText && rawText.length > 20) {
+      return rawText;
     }
   } catch (err) {
-    console.warn('pdfjs-dist extraction fallback trigger:', err);
+    console.warn('PDF text extraction fallback:', err);
   }
-
-  const rawText = await file.text();
-  return rawText;
+  return '';
 }
 
 export function extractEmailFromText(text: string, filename?: string): string {
-  // 1. Search for real email pattern in text (case insensitive)
   const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i;
   const match = text.match(emailRegex);
   if (match && match[1]) {
@@ -45,14 +20,8 @@ export function extractEmailFromText(text: string, filename?: string): string {
     }
   }
 
-  // 2. Check filename for email handle (e.g. omthakkar201.pdf or omthakkar168_resume.pdf)
   if (filename) {
     const cleanFn = filename.replace(/\.[a-zA-Z0-9]+$/, '').toLowerCase();
-    const fnEmailMatch = cleanFn.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i);
-    if (fnEmailMatch && fnEmailMatch[1]) {
-      return fnEmailMatch[1].toLowerCase();
-    }
-
     const handleMatch = cleanFn.match(/([a-zA-Z0-9_]{4,})/);
     if (handleMatch && handleMatch[1]) {
       const handle = handleMatch[1].replace(/^(resume|cv|my_resume|practical)[_\-\s]*/i, '');
@@ -84,7 +53,6 @@ export function extractProperCandidateName(rawText: string, filename?: string): 
     .map(l => l.trim())
     .filter(l => l.length > 0);
 
-  // 1. Scan the top 15 text lines for a person's Full Name (2 to 4 capitalized words)
   for (const line of lines.slice(0, 15)) {
     if (
       line.startsWith('%') ||
@@ -94,8 +62,6 @@ export function extractProperCandidateName(rawText: string, filename?: string): 
       line.toLowerCase().includes('pdf') ||
       line.toLowerCase().includes('resume') ||
       line.toLowerCase().includes('curriculum') ||
-      line.toLowerCase().includes('page') ||
-      line.toLowerCase().includes('practical') ||
       line.length < 3 ||
       line.length > 45 ||
       /\d{2,}/.test(line)
@@ -115,7 +81,6 @@ export function extractProperCandidateName(rawText: string, filename?: string): 
     }
   }
 
-  // 2. Extract from Email Address Handle (e.g. "omthakkar201@gmail.com" -> "Om Thakkar")
   const emailMatch = rawText.match(/([a-zA-Z0-9._%+-]+)@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i);
   if (emailMatch && emailMatch[1]) {
     const handleWords = emailMatch[1]
@@ -131,7 +96,6 @@ export function extractProperCandidateName(rawText: string, filename?: string): 
     }
   }
 
-  // 3. Extract from Filename if clean
   if (filename && filename.length > 3) {
     const cleanFn = filename
       .replace(/\.[a-zA-Z0-9]+$/, '')

@@ -1,63 +1,104 @@
 import { useState, useEffect } from 'react';
-import type { CandidateProfile, ATSAnalysis, JobMatchResult, JobRole, SavedCandidateRecord } from './types/resume';
-import { SAMPLE_RESUMES } from './data/sampleResumes';
-import { parseResumeText, evaluateATS } from './utils/resumeParser';
-import { matchResumeWithJobs } from './utils/jobMatcher';
-import { generatePDFReport } from './utils/exportPdf';
-import { getSavedCandidates, saveCandidateRecord, deleteCandidateRecord } from './utils/storage';
-
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
-
-import { Dashboard } from './pages/Dashboard';
+import { JobModal } from './components/JobModal';
+import { SearchModal } from './components/SearchModal';
+import { HomePage } from './pages/HomePage';
+import { AboutUsPage } from './pages/AboutUsPage';
+import { CareersPage } from './pages/CareersPage';
+import { ServicesPage } from './pages/ServicesPage';
+import { ContactPage } from './pages/ContactPage';
 import { ResumeAnalyzerPage } from './pages/ResumeAnalyzer';
 import { JobMatchesPage } from './pages/JobMatches';
 import { InterviewStudioPage } from './pages/InterviewStudio';
 import { CandidateDatabasePage } from './pages/CandidateDatabasePage';
-import { EnterpriseWidgetPage } from './pages/EnterpriseWidgetPage';
+
+import type { Job } from './types';
+import type { CandidateProfile, ATSAnalysis, JobMatchResult, SavedCandidateRecord, JobRole } from './types/resume';
+import { SAMPLE_RESUMES } from './data/sampleResumes';
+import { parseResumeText, evaluateATS } from './utils/resumeParser';
+import { matchResumeWithJobs } from './utils/jobMatcher';
+import { getSavedCandidates, saveCandidateRecord, deleteCandidateRecord } from './utils/storage';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<string>('dashboard');
-  const [candidateProfile, setCandidateProfile] = useState<CandidateProfile | null>(SAMPLE_RESUMES.software_engineer);
-  const [atsAnalysis, setAtsAnalysis] = useState<ATSAnalysis | null>(null);
-  const [jobMatches, setJobMatches] = useState<JobMatchResult[]>([]);
+  const [activeTab, setActiveTab] = useState<string>('home');
+  const [darkMode, setDarkMode] = useState<boolean>(true);
+  const [activeTheme, setActiveTheme] = useState<string>(() => {
+    return localStorage.getItem('portal_theme') || 'violet';
+  });
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [searchOpen, setSearchOpen] = useState<boolean>(false);
+
+  // Resume Analyzer & Candidate Management State
+  const [candidateProfile, setCandidateProfile] = useState<CandidateProfile | null>(
+    SAMPLE_RESUMES.software_engineer
+  );
+
+  const [atsAnalysis, setAtsAnalysis] = useState<ATSAnalysis | null>(() => 
+    evaluateATS(SAMPLE_RESUMES.software_engineer)
+  );
+
+  const [jobMatches, setJobMatches] = useState<JobMatchResult[]>(() => 
+    matchResumeWithJobs(SAMPLE_RESUMES.software_engineer)
+  );
+
+  const [savedCandidates, setSavedCandidates] = useState<SavedCandidateRecord[]>(() => 
+    getSavedCandidates()
+  );
+
   const [selectedJobForInterview, setSelectedJobForInterview] = useState<JobRole | undefined>(undefined);
-  const [savedCandidates, setSavedCandidates] = useState<SavedCandidateRecord[]>([]);
 
+  // Sync Dark/Light & Color Theme attribute to html root element
   useEffect(() => {
-    const list = getSavedCandidates();
-    setSavedCandidates(list);
-
-    if (candidateProfile) {
-      const ats = evaluateATS(candidateProfile);
-      const matches = matchResumeWithJobs(candidateProfile);
-      setAtsAnalysis(ats);
-      setJobMatches(matches);
+    const root = document.documentElement;
+    if (darkMode) {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.add('light');
+      root.classList.remove('dark');
     }
-  }, [candidateProfile]);
+    root.setAttribute('data-theme', activeTheme);
+    localStorage.setItem('portal_theme', activeTheme);
+  }, [darkMode, activeTheme]);
 
-  const handleParseResume = (rawText: string, filename?: string) => {
-    const parsed = parseResumeText(rawText, filename);
-    const ats = evaluateATS(parsed);
-    const matches = matchResumeWithJobs(parsed);
+  // Keyboard shortcut Cmd/Ctrl + K for search modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
-    setCandidateProfile(parsed);
+  // Resume Parsing Handlers
+  const handleParseResume = (text: string, filename?: string) => {
+    const profile = parseResumeText(text, filename);
+    const ats = evaluateATS(profile);
+    const matches = matchResumeWithJobs(profile);
+
+    setCandidateProfile(profile);
     setAtsAnalysis(ats);
     setJobMatches(matches);
 
-    const updated = saveCandidateRecord(parsed, ats, matches);
+    // Auto-save candidate
+    const updated = saveCandidateRecord(profile, ats, matches);
     setSavedCandidates(updated);
   };
 
-  const handleSelectSampleResume = (key: string) => {
-    const selected = SAMPLE_RESUMES[key];
-    if (selected) {
-      setCandidateProfile(selected);
-      const ats = evaluateATS(selected);
-      const matches = matchResumeWithJobs(selected);
-      setAtsAnalysis(ats);
-      setJobMatches(matches);
-    }
+  const handleSelectPreset = (profile: CandidateProfile) => {
+    const ats = evaluateATS(profile);
+    const matches = matchResumeWithJobs(profile);
+
+    setCandidateProfile(profile);
+    setAtsAnalysis(ats);
+    setJobMatches(matches);
+
+    const updated = saveCandidateRecord(profile, ats, matches);
+    setSavedCandidates(updated);
   };
 
   const handleSaveCandidate = () => {
@@ -73,73 +114,86 @@ export function App() {
   };
 
   const handleUpdateCandidateName = (newName: string) => {
-    if (candidateProfile) {
-      const updatedProfile = { ...candidateProfile, name: newName };
-      setCandidateProfile(updatedProfile);
-      if (atsAnalysis) {
-        const updatedMatches = matchResumeWithJobs(updatedProfile);
-        setJobMatches(updatedMatches);
-        const updatedSaved = saveCandidateRecord(updatedProfile, atsAnalysis, updatedMatches);
-        setSavedCandidates(updatedSaved);
-      }
+    if (!candidateProfile) return;
+    const updatedProfile = { ...candidateProfile, name: newName };
+    setCandidateProfile(updatedProfile);
+
+    if (atsAnalysis) {
+      const updatedCandidates = saveCandidateRecord(updatedProfile, atsAnalysis, jobMatches);
+      setSavedCandidates(updatedCandidates);
     }
   };
 
   const handleUpdateCandidateEmail = (newEmail: string) => {
-    if (candidateProfile) {
-      const updatedProfile = { ...candidateProfile, email: newEmail };
-      setCandidateProfile(updatedProfile);
-      if (atsAnalysis) {
-        const updatedMatches = matchResumeWithJobs(updatedProfile);
-        setJobMatches(updatedMatches);
-        const updatedSaved = saveCandidateRecord(updatedProfile, atsAnalysis, updatedMatches);
-        setSavedCandidates(updatedSaved);
-      }
+    if (!candidateProfile) return;
+    const updatedProfile = { ...candidateProfile, email: newEmail };
+    setCandidateProfile(updatedProfile);
+
+    if (atsAnalysis) {
+      const updatedCandidates = saveCandidateRecord(updatedProfile, atsAnalysis, jobMatches);
+      setSavedCandidates(updatedCandidates);
     }
   };
 
-  const handleSelectJobForInterview = (match: JobMatchResult) => {
+  const handleSelectForInterview = (match: JobMatchResult) => {
     setSelectedJobForInterview(match.job);
-    setActiveTab('interview');
+    setActiveTab('interview-studio');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleExportPdf = () => {
-    if (candidateProfile && atsAnalysis) {
-      generatePDFReport(candidateProfile, atsAnalysis, jobMatches);
-    }
+  // Scroll to top on tab change
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <div className="min-h-screen bg-[#080c14] text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-slate-950">
+    <div className="min-h-screen flex flex-col bg-[var(--color-bg-dark)] text-slate-100 transition-colors duration-300">
+      
+      {/* Sticky Header Navigation */}
       <Navbar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        candidateProfile={candidateProfile}
-        atsAnalysis={atsAnalysis}
-        jobMatches={jobMatches}
-        onExportPdf={handleExportPdf}
-        onSelectSampleResume={handleSelectSampleResume}
+        setActiveTab={handleTabChange}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        activeTheme={activeTheme}
+        setActiveTheme={setActiveTheme}
+        openSearch={() => setSearchOpen(true)}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {activeTab === 'dashboard' && (
-          <Dashboard
-            candidateProfile={candidateProfile}
-            atsAnalysis={atsAnalysis}
-            jobMatches={jobMatches}
-            onNavigateTab={setActiveTab}
-            onSelectJobForInterview={handleSelectJobForInterview}
+      {/* Main View Area */}
+      <main className="flex-grow">
+        {activeTab === 'home' && (
+          <HomePage setActiveTab={handleTabChange} />
+        )}
+
+        {activeTab === 'about' && (
+          <AboutUsPage setActiveTab={handleTabChange} />
+        )}
+
+        {activeTab === 'careers' && (
+          <CareersPage 
+            onSelectJob={(job) => setSelectedJob(job)} 
+            setActiveTab={handleTabChange}
           />
         )}
 
-        {activeTab === 'analyzer' && (
+        {activeTab === 'services' && (
+          <ServicesPage setActiveTab={handleTabChange} />
+        )}
+
+        {activeTab === 'contact' && (
+          <ContactPage />
+        )}
+
+        {activeTab === 'resume-analyzer' && (
           <ResumeAnalyzerPage
             candidateProfile={candidateProfile}
             atsAnalysis={atsAnalysis}
             jobMatches={jobMatches}
             savedCandidates={savedCandidates}
             onParseResume={handleParseResume}
-            onSelectPreset={setCandidateProfile}
+            onSelectPreset={handleSelectPreset}
             onSaveCandidate={handleSaveCandidate}
             onDeleteCandidate={handleDeleteCandidate}
             onUpdateCandidateName={handleUpdateCandidateName}
@@ -147,39 +201,48 @@ export function App() {
           />
         )}
 
-        {activeTab === 'jobs' && (
+        {activeTab === 'job-matches' && (
           <JobMatchesPage
             jobMatches={jobMatches}
-            onSelectForInterview={handleSelectJobForInterview}
+            onSelectForInterview={handleSelectForInterview}
           />
         )}
 
-        {activeTab === 'interview' && candidateProfile && (
+        {activeTab === 'interview-studio' && candidateProfile && (
           <InterviewStudioPage
             candidateProfile={candidateProfile}
             selectedJob={selectedJobForInterview}
           />
         )}
 
-        {activeTab === 'database' && (
+        {activeTab === 'candidate-db' && (
           <CandidateDatabasePage
             candidates={savedCandidates}
-            onSelectCandidate={(prof) => {
-              setCandidateProfile(prof);
-              setActiveTab('analyzer');
-            }}
+            onSelectCandidate={handleSelectPreset}
             onDeleteCandidate={handleDeleteCandidate}
-          />
-        )}
-
-        {activeTab === 'widget' && (
-          <EnterpriseWidgetPage
-            onSelectJobForInterview={handleSelectJobForInterview}
           />
         )}
       </main>
 
-      <Footer />
+      {/* Footer */}
+      <Footer setActiveTab={handleTabChange} />
+
+      {/* Job Details & Application Modal */}
+      {selectedJob && (
+        <JobModal
+          job={selectedJob}
+          onClose={() => setSelectedJob(null)}
+        />
+      )}
+
+      {/* Quick Search Modal */}
+      <SearchModal
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        onSelectJob={(job) => setSelectedJob(job)}
+        setActiveTab={handleTabChange}
+      />
+
     </div>
   );
 }

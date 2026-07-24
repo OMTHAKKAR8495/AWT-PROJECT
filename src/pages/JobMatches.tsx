@@ -1,111 +1,100 @@
 import React, { useState } from 'react';
-import { Briefcase, Search } from 'lucide-react';
+import { Target, Sparkles, Filter } from 'lucide-react';
 import type { JobMatchResult } from '../types/resume';
 import { JobMatchCard } from '../components/JobMatchCard';
+import { SkillGapChart } from '../components/SkillGapChart';
 
-interface JobMatchesProps {
+interface JobMatchesPageProps {
   jobMatches: JobMatchResult[];
   onSelectForInterview: (match: JobMatchResult) => void;
 }
 
-export const JobMatchesPage: React.FC<JobMatchesProps> = ({
+export const JobMatchesPage: React.FC<JobMatchesPageProps> = ({
   jobMatches,
   onSelectForInterview
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState('All');
-  const [minMatchScore, setMinMatchScore] = useState(0);
-
-  const departments = ['All', 'Software Engineering', 'Frontend Engineering', 'Data & Artificial Intelligence', 'Design & UX', 'Infrastructure & Operations'];
+  const [filter, setFilter] = useState<'All' | 'High Match' | 'Good Fit' | 'Eligible Only'>('All');
 
   const filteredMatches = jobMatches.filter(m => {
-    const matchesSearch = 
-      m.job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.job.requiredSkills.some(s => s.toLowerCase().includes(searchTerm.toLowerCase()));
-
-    const matchesDept = selectedDepartment === 'All' || m.job.department === selectedDepartment;
-    const matchesScore = m.matchPercentage >= minMatchScore;
-
-    return matchesSearch && matchesDept && matchesScore;
+    if (filter === 'High Match') return m.matchLevel === 'High Match';
+    if (filter === 'Good Fit') return m.matchLevel === 'Good Fit';
+    if (filter === 'Eligible Only') return m.eligibilityStatus === 'OFFICIALLY ELIGIBLE';
+    return true;
   });
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <div className="space-y-8 animate-in fade-in duration-300 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       
-      <div className="glass-panel rounded-2xl p-6 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="glass-panel rounded-2xl p-6 border border-[var(--color-border)] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-              Automated Job Matching Engine
+            <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-[var(--color-badge-bg)] text-[var(--color-badge-text)] border border-[var(--color-badge-border)] flex items-center gap-1">
+              <Sparkles className="w-3 h-3 text-[var(--color-accent)] animate-pulse" />
+              AI Matching Engine
             </span>
             <span className="text-xs text-slate-400">
-              Zero Manual Job Search Required
+              Evaluated against Nexus & Corporate Jobs
             </span>
           </div>
+
           <h2 className="text-2xl font-extrabold text-white mt-1">
-            Company Open Job Opportunities ({filteredMatches.length})
+            Job Match & Official Company Eligibility Results
           </h2>
           <p className="text-xs text-slate-400 mt-1">
-            Matched directly against candidate's parsed skills & experience level.
+            Calculates skills overlap, required degree compliance, and minimum experience thresholds.
           </p>
         </div>
-      </div>
 
-      <div className="glass-panel rounded-2xl p-4 border border-slate-800 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-        
-        <div className="md:col-span-5 relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by job title, skill (e.g. React, Python, AWS)..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 font-sans"
-          />
-        </div>
-
-        <div className="md:col-span-4">
-          <select
-            value={selectedDepartment}
-            onChange={(e) => setSelectedDepartment(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-sky-500 cursor-pointer"
-          >
-            {departments.map(dept => (
-              <option key={dept} value={dept}>{dept}</option>
+        <div className="flex items-center gap-2 bg-[var(--color-bg-surface)] p-1.5 rounded-xl border border-[var(--color-border)]">
+          <Filter className="w-4 h-4 text-[var(--color-accent)] ml-2 shrink-0" />
+          <div className="flex flex-wrap gap-1">
+            {(['All', 'Eligible Only', 'High Match', 'Good Fit'] as const).map(f => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  filter === f
+                    ? 'theme-btn-primary font-bold shadow-md'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {f}
+              </button>
             ))}
-          </select>
+          </div>
         </div>
-
-        <div className="md:col-span-3 flex items-center gap-2">
-          <span className="text-[11px] text-slate-400 font-medium shrink-0">Min Fit: {minMatchScore}%</span>
-          <input
-            type="range"
-            min="0"
-            max="80"
-            step="10"
-            value={minMatchScore}
-            onChange={(e) => setMinMatchScore(Number(e.target.value))}
-            className="w-full accent-sky-500 cursor-pointer"
-          />
-        </div>
-
       </div>
+
+      <SkillGapChart jobMatches={jobMatches} />
 
       <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <Target className="w-5 h-5 text-[var(--color-accent)]" />
+            Ranked Job Match Openings ({filteredMatches.length})
+          </h3>
+          <span className="text-xs text-slate-400">Sorted by % Skills Match</span>
+        </div>
+
         {filteredMatches.length > 0 ? (
-          filteredMatches.map(match => (
-            <JobMatchCard
-              key={match.job.id}
-              matchResult={match}
-              onSelectForInterview={onSelectForInterview}
-            />
-          ))
+          <div className="grid grid-cols-1 gap-6">
+            {filteredMatches.map((match) => (
+              <JobMatchCard
+                key={match.job.id}
+                matchResult={match}
+                onSelectForInterview={onSelectForInterview}
+              />
+            ))}
+          </div>
         ) : (
-          <div className="glass-panel rounded-2xl p-12 text-center border border-slate-800">
-            <Briefcase className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-            <h3 className="text-base font-bold text-white">No Matching Jobs Found</h3>
-            <p className="text-xs text-slate-400 mt-1">Try broadening your search keywords or lowering the minimum match fit filter.</p>
+          <div className="glass-panel p-12 rounded-2xl text-center space-y-3 border border-[var(--color-border)]">
+            <p className="text-sm font-semibold text-slate-300">No job openings match the selected filter choice.</p>
+            <button
+              onClick={() => setFilter('All')}
+              className="px-4 py-2 theme-btn-primary text-white text-xs font-bold rounded-xl shadow-md"
+            >
+              Reset Filter to View All Jobs
+            </button>
           </div>
         )}
       </div>

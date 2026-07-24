@@ -28,21 +28,15 @@ const PDF_NOISE_WORDS = new Set([
 ]);
 
 export function parseResumeText(text: string, filename?: string): CandidateProfile {
-  // Clean raw PDF binary noise if present
   const cleanedText = text.includes('%PDF') ? cleanBinaryPdfText(text) : text;
   const normalizedText = cleanedText.replace(/\r\n/g, '\n');
 
-  // Extract Proper Candidate Name
   const name = extractProperCandidateName(text, filename);
-
-  // Extract Email Address (robust multi-stage search)
   const email = extractEmailFromText(text, filename);
 
-  // Extract Phone Number
   const phoneMatch = text.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
   const phone = phoneMatch ? phoneMatch[0] : '+1 (555) 019-2834';
 
-  // Extract Technical Skills
   const detectedSkillsSet = new Set<string>();
   KNOWN_SKILLS.forEach(skill => {
     const regex = new RegExp(`\\b${escapeRegExp(skill)}\\b`, 'i');
@@ -104,7 +98,7 @@ export function parseResumeText(text: string, filename?: string): CandidateProfi
     experienceItems: [
       {
         role: title,
-        company: 'Tech Solutions Inc.',
+        company: 'Nexus Dynamics Tech',
         period: '2022 - Present',
         description: `Delivered engineering projects using ${skills.slice(0, 4).join(', ')}.`
       }

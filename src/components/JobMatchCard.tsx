@@ -43,20 +43,20 @@ export const JobMatchCard: React.FC<JobMatchCardProps> = ({
   };
 
   return (
-    <div className="glass-panel glass-panel-hover rounded-2xl p-6 border border-slate-800 space-y-4 relative overflow-hidden group">
+    <div className="glass-panel rounded-2xl p-6 border border-[var(--color-border)] space-y-4 relative overflow-hidden group">
       
       {/* Top Banner Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[var(--color-border)]">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider rounded-md bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
-              <Building className="w-3 h-3 text-sky-400" />
+            <span className="px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider rounded-md bg-[var(--color-bg-dark)] text-slate-300 border border-[var(--color-border)] flex items-center gap-1">
+              <Building className="w-3 h-3 text-[var(--color-accent)]" />
               {job.company}
             </span>
             <span className="text-xs text-slate-400">{job.department}</span>
           </div>
 
-          <h3 className="text-xl font-extrabold text-white mt-1 group-hover:text-sky-400 transition-colors">
+          <h3 className="text-xl font-extrabold text-white mt-1 group-hover:text-[var(--color-accent)] transition-colors">
             {job.title}
           </h3>
         </div>
@@ -75,7 +75,7 @@ export const JobMatchCard: React.FC<JobMatchCardProps> = ({
       {/* Meta Row: Location, Salary, Experience & Degree */}
       <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400">
         <span className="flex items-center gap-1">
-          <MapPin className="w-3.5 h-3.5 text-sky-400" />
+          <MapPin className="w-3.5 h-3.5 text-[var(--color-accent)]" />
           {job.location} ({job.type})
         </span>
         <span className="flex items-center gap-1">
@@ -95,13 +95,13 @@ export const JobMatchCard: React.FC<JobMatchCardProps> = ({
       </div>
 
       {/* AI Recommendation Box */}
-      <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 text-xs text-slate-300 flex items-start gap-2">
-        <Sparkles className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+      <div className="p-3 rounded-xl bg-[var(--color-bg-dark)]/80 border border-[var(--color-border)] text-xs text-slate-300 flex items-start gap-2">
+        <Sparkles className="w-4 h-4 text-[var(--color-accent)] shrink-0 mt-0.5" />
         <span>{recommendationReason}</span>
       </div>
 
       {/* Company Specific Eligibility Checklist Breakdown */}
-      <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
+      <div className="p-3.5 rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] space-y-2">
         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
           {job.company} Criteria Evaluation Checklist:
         </span>
@@ -164,10 +164,10 @@ export const JobMatchCard: React.FC<JobMatchCardProps> = ({
 
       {/* Expandable Section */}
       {expanded && (
-        <div className="pt-4 border-t border-slate-800 space-y-3 text-xs text-slate-300">
+        <div className="pt-4 border-t border-[var(--color-border)] space-y-3 text-xs text-slate-300">
           {job.companyCriteriaNotes && (
-            <div className="p-3 rounded-lg bg-indigo-500/5 border border-indigo-500/20">
-              <h4 className="font-bold text-indigo-400 mb-1">Company-Specific Hiring Criteria</h4>
+            <div className="p-3 rounded-lg bg-[var(--color-badge-bg)] border border-[var(--color-badge-border)]">
+              <h4 className="font-bold text-[var(--color-accent)] mb-1">Company-Specific Hiring Criteria</h4>
               <ul className="list-disc list-inside space-y-1 text-slate-300">
                 {job.companyCriteriaNotes.map((note, idx) => (
                   <li key={idx}>{note}</li>
@@ -193,10 +193,10 @@ export const JobMatchCard: React.FC<JobMatchCardProps> = ({
       )}
 
       {/* Action Footer Bar */}
-      <div className="flex items-center justify-between pt-3 border-t border-slate-800/60">
+      <div className="flex items-center justify-between pt-3 border-t border-[var(--color-border)]">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="text-xs text-slate-400 hover:text-sky-400 flex items-center gap-1 transition-colors font-medium"
+          className="text-xs text-slate-400 hover:text-[var(--color-accent)] flex items-center gap-1 transition-colors font-medium"
         >
           {expanded ? (
             <>Less Details <ChevronUp className="w-3.5 h-3.5" /></>
@@ -208,7 +208,7 @@ export const JobMatchCard: React.FC<JobMatchCardProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={() => onSelectForInterview(matchResult)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-400 hover:to-indigo-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all duration-200"
+            className="theme-btn-primary font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-md flex items-center gap-1.5 transition-all"
           >
             <MessageSquareCode className="w-3.5 h-3.5" />
             Interview Questions for Role

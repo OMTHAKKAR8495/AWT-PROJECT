@@ -124,27 +124,28 @@ export const COMPANY_JOBS: JobRole[] = [
     ]
   },
   {
-    id: 'job-106',
-    title: 'Data Analyst & BI Specialist',
-    department: 'Data & Analytics',
-    company: 'Analytics Corp Solutions',
-    location: 'Bangalore / On-site',
+    id: 'JOB-AI-801',
+    title: 'Principal AI Research Scientist - Large Multimodal Models',
+    department: 'Software & AI',
+    company: 'Nexus Dynamics',
+    location: 'New York, NY',
     type: 'Full-time',
-    experienceYears: 2,
-    minDegreeRequired: 'Bachelor Degree in Statistics, Economics, CS, or Business Analytics',
-    requiredSkills: ['SQL', 'Python', 'Pandas', 'Data Visualization', 'Tableau'],
-    preferredSkills: ['PowerBI', 'NumPy', 'ETL', 'PostgreSQL', 'Excel'],
-    salaryRange: '₹8,000,000 - ₹14,000,000 / year ($50k - $85k)',
-    description: 'Transform complex raw dataset metrics into actionable business intelligence reports and strategic executive dashboards.',
+    experienceYears: 7,
+    minDegreeRequired: 'Ph.D. in Computer Science, AI or Robotics',
+    requiredSkills: ['Python', 'PyTorch', 'Large Language Models', 'Deep Learning', 'CUDA', 'Git'],
+    preferredSkills: ['JAX', 'Distributed Systems', 'Transformer Models', 'HPC'],
+    salaryRange: '$280,000 - $380,000 USD / year + Equity',
+    description: 'Lead our flagship AI research division developing next-generation multimodal neural networks for autonomous industrial reasoning and enterprise automation.',
     responsibilities: [
-      'Extract data insights using complex SQL queries and Python analytics libraries.',
-      'Build automated daily BI dashboards in Tableau and PowerBI.',
-      'Work alongside product leadership to track product KPI metrics.'
+      'Architect and train frontier neural networks across vision, text, and sensor telemetry data.',
+      'Publish high-impact research papers in NeurIPS, ICML, and CVPR on behalf of Nexus AI Labs.',
+      'Collaborate with cloud infrastructure teams to optimize distributed cluster performance across 10,000+ H100 GPUs.'
     ],
     companyCriteriaNotes: [
-      'Analytics Corp requires strong complex SQL querying skills.',
-      'Proficiency in Tableau or PowerBI for building executive analytics dashboards.',
-      '2+ years experience in quantitative data analysis.'
-    ]
+      'Ph.D. degree required with publications in NeurIPS/ICML/CVPR.',
+      '7+ years experience in deep learning and LLM pre-training.',
+      'Expertise in PyTorch and distributed GPU clusters.'
+    ],
+    benefits: ['Full Executive Health Plan', '100% Employer Matched Equity', 'Relocation Package']
   }
 ];

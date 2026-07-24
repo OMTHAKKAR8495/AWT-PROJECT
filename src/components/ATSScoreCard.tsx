@@ -18,28 +18,28 @@ interface ATSScoreCardProps {
 export const ATSScoreCard: React.FC<ATSScoreCardProps> = ({ ats }) => {
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-emerald-400 border-emerald-500/40 bg-emerald-500/10';
-    if (score >= 60) return 'text-sky-400 border-sky-500/40 bg-sky-500/10';
+    if (score >= 60) return 'text-[var(--color-accent)] border-[var(--color-border)] bg-[var(--color-badge-bg)]';
     return 'text-amber-400 border-amber-500/40 bg-amber-500/10';
   };
 
   const getScoreGradient = (score: number) => {
     if (score >= 80) return 'from-emerald-500 to-teal-400';
-    if (score >= 60) return 'from-sky-500 to-indigo-500';
+    if (score >= 60) return 'from-[var(--color-primary)] to-[var(--color-accent)]';
     return 'from-amber-500 to-orange-500';
   };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
       
-      <div className="lg:col-span-5 glass-panel rounded-2xl p-6 border border-slate-800 flex flex-col justify-between relative overflow-hidden">
+      <div className="lg:col-span-5 glass-panel rounded-2xl p-6 border border-[var(--color-border)] flex flex-col justify-between relative overflow-hidden">
         <div className="absolute top-0 right-0 p-4 opacity-10">
-          <Award className="w-40 h-40 text-sky-400" />
+          <Award className="w-40 h-40 text-[var(--color-accent)]" />
         </div>
 
         <div>
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-sky-400" />
+              <ShieldCheck className="w-4 h-4 text-[var(--color-accent)]" />
               ATS System Compatibility
             </span>
             <span className={`px-2.5 py-1 text-xs font-bold rounded-full border ${getScoreColor(ats.overallScore)}`}>
@@ -63,7 +63,7 @@ export const ATSScoreCard: React.FC<ATSScoreCardProps> = ({ ats }) => {
                   cx="50"
                   cy="50"
                   r="42"
-                  className="text-sky-400 transition-all duration-1000 ease-out"
+                  className="text-[var(--color-accent)] transition-all duration-1000 ease-out"
                   strokeWidth="8"
                   strokeDasharray={264}
                   strokeDashoffset={264 - (264 * ats.overallScore) / 100}
@@ -73,8 +73,8 @@ export const ATSScoreCard: React.FC<ATSScoreCardProps> = ({ ats }) => {
                 />
                 <defs>
                   <linearGradient id="atsGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#38bdf8" />
-                    <stop offset="100%" stopColor="#818cf8" />
+                    <stop offset="0%" stopColor="var(--color-primary)" />
+                    <stop offset="100%" stopColor="var(--color-accent)" />
                   </linearGradient>
                 </defs>
               </svg>
@@ -91,23 +91,23 @@ export const ATSScoreCard: React.FC<ATSScoreCardProps> = ({ ats }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-800/80">
-          <div className="bg-slate-900/60 p-3 rounded-xl border border-slate-800/60">
+        <div className="grid grid-cols-2 gap-3 pt-4 border-t border-[var(--color-border)]">
+          <div className="bg-[var(--color-bg-dark)]/60 p-3 rounded-xl border border-[var(--color-border)]">
             <span className="text-[10px] text-slate-400 font-medium">Action Verbs</span>
             <p className="text-base font-bold text-emerald-400 mt-0.5">{ats.actionVerbsFound.length} Found</p>
           </div>
-          <div className="bg-slate-900/60 p-3 rounded-xl border border-slate-800/60">
+          <div className="bg-[var(--color-bg-dark)]/60 p-3 rounded-xl border border-[var(--color-border)]">
             <span className="text-[10px] text-slate-400 font-medium">Formatting Grade</span>
-            <p className="text-base font-bold text-sky-400 mt-0.5">{ats.formattingScore}/100</p>
+            <p className="text-base font-bold text-[var(--color-accent)] mt-0.5">{ats.formattingScore}/100</p>
           </div>
         </div>
       </div>
 
       <div className="lg:col-span-7 space-y-6">
         
-        <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+        <div className="glass-panel rounded-2xl p-6 border border-[var(--color-border)] space-y-4">
           <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-            <Layers className="w-4 h-4 text-sky-400" />
+            <Layers className="w-4 h-4 text-[var(--color-accent)]" />
             Core Resume Scoring Pillars
           </h3>
 
@@ -122,12 +122,12 @@ export const ATSScoreCard: React.FC<ATSScoreCardProps> = ({ ats }) => {
               <div key={idx} className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-semibold text-slate-300 flex items-center gap-1.5">
-                    <Icon className="w-3.5 h-3.5 text-sky-400" />
+                    <Icon className="w-3.5 h-3.5 text-[var(--color-accent)]" />
                     {item.label}
                   </span>
                   <span className="font-bold text-slate-200">{item.score}%</span>
                 </div>
-                <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                <div className="h-2 w-full bg-[var(--color-bg-dark)] rounded-full overflow-hidden border border-[var(--color-border)]">
                   <div
                     className={`h-full bg-gradient-to-r ${getScoreGradient(item.score)} transition-all duration-700`}
                     style={{ width: `${item.score}%` }}
@@ -139,7 +139,6 @@ export const ATSScoreCard: React.FC<ATSScoreCardProps> = ({ ats }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          
           <div className="glass-panel p-5 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
             <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2 mb-3">
               <CheckCircle2 className="w-4 h-4" /> Key Resume Strengths

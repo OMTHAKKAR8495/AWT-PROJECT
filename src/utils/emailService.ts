@@ -28,7 +28,6 @@ export async function sendRealEmailViaAPI(options: SendEmailOptions): Promise<Se
 
   logs.push(`[Direct Email API] Compiling structured analysis report for <${targetEmail}>...`);
 
-  // FormSubmit payload: Fields starting with '_' are configuration parameters and NOT rendered in table
   const formSubmitPayload: Record<string, string> = {
     _subject: options.subject,
     _template: 'table',
@@ -69,7 +68,6 @@ export async function sendRealEmailViaAPI(options: SendEmailOptions): Promise<Se
     logs.push(`[Gateway Note] Dispatch request submitted to mail endpoint.`);
   }
 
-  // Backup REST API Gateway
   try {
     logs.push(`[Infobip/REST API] Authenticating with Key: ${activeKey.slice(0, 10)}...`);
     const infobipRes = await fetch('https://api.infobip.com/email/1/send', {
@@ -79,7 +77,7 @@ export async function sendRealEmailViaAPI(options: SendEmailOptions): Promise<Se
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: 'CareerMatch AI <noreply@careermatch.ai>',
+        from: 'Nexus AI <noreply@nexusdynamics.global>',
         to: targetEmail,
         subject: options.subject,
         text: options.body
