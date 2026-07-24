@@ -8,7 +8,7 @@ import jobRoutes from './routes/jobRoutes';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+let PORT = Number(process.env.PORT) || 5000;
 
 // Connect to MongoDB Database
 connectDB();
@@ -33,8 +33,21 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ error: 'Internal Server Error', message: err.message });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 CareerMatch AI Express + MongoDB Server running on http://localhost:${PORT}`);
-  console.log(`📡 Candidates API: http://localhost:${PORT}/api/candidates`);
-  console.log(`📡 Jobs API:       http://localhost:${PORT}/api/jobs`);
-});
+function startServer(port: number) {
+  const server = app.listen(port, () => {
+    console.log(`🚀 CareerMatch AI Express + MongoDB Server running on http://localhost:${port}`);
+    console.log(`📡 Candidates API: http://localhost:${port}/api/candidates`);
+    console.log(`📡 Jobs API:       http://localhost:${port}/api/jobs`);
+  });
+
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      console.warn(`⚠️ Port ${port} is occupied by another process. Trying port ${port + 1}...`);
+      startServer(port + 1);
+    } else {
+      console.error('Server Listen Error:', err);
+    }
+  });
+}
+
+startServer(PORT);
