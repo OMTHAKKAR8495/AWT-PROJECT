@@ -9,6 +9,7 @@ import { getSavedCandidates, saveCandidateRecord, deleteCandidateRecord } from '
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 
+import { CompanyPortalPage } from './pages/CompanyPortalPage';
 import { Dashboard } from './pages/Dashboard';
 import { ResumeAnalyzerPage } from './pages/ResumeAnalyzer';
 import { JobMatchesPage } from './pages/JobMatches';
@@ -17,7 +18,7 @@ import { CandidateDatabasePage } from './pages/CandidateDatabasePage';
 import { EnterpriseWidgetPage } from './pages/EnterpriseWidgetPage';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<string>('dashboard');
+  const [activeTab, setActiveTab] = useState<string>('portal');
   const [candidateProfile, setCandidateProfile] = useState<CandidateProfile | null>(SAMPLE_RESUMES.software_engineer);
   const [atsAnalysis, setAtsAnalysis] = useState<ATSAnalysis | null>(null);
   const [jobMatches, setJobMatches] = useState<JobMatchResult[]>([]);
@@ -103,6 +104,11 @@ export function App() {
     setActiveTab('interview');
   };
 
+  const handleApplyForJob = (job: JobRole) => {
+    setSelectedJobForInterview(job);
+    setActiveTab('analyzer');
+  };
+
   const handleExportPdf = () => {
     if (candidateProfile && atsAnalysis) {
       generatePDFReport(candidateProfile, atsAnalysis, jobMatches);
@@ -122,6 +128,12 @@ export function App() {
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {activeTab === 'portal' && (
+          <CompanyPortalPage
+            onApplyForJob={handleApplyForJob}
+          />
+        )}
+
         {activeTab === 'dashboard' && (
           <Dashboard
             candidateProfile={candidateProfile}
