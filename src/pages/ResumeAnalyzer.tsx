@@ -6,6 +6,7 @@ import { ATSScoreCard } from '../components/ATSScoreCard';
 import { SavedCandidatesBank } from '../components/SavedCandidatesBank';
 import { generatePDFReport } from '../utils/exportPdf';
 import { EmailReportModal } from '../components/EmailReportModal';
+import { getTranslation, type SupportedLanguage } from '../data/translations';
 
 interface ResumeAnalyzerProps {
   candidateProfile: CandidateProfile | null;
@@ -18,6 +19,7 @@ interface ResumeAnalyzerProps {
   onDeleteCandidate: (id: string) => void;
   onUpdateCandidateName: (newName: string) => void;
   onUpdateCandidateEmail: (newEmail: string) => void;
+  selectedLanguage?: SupportedLanguage;
 }
 
 export const ResumeAnalyzerPage: React.FC<ResumeAnalyzerProps> = ({
@@ -30,7 +32,8 @@ export const ResumeAnalyzerPage: React.FC<ResumeAnalyzerProps> = ({
   onSaveCandidate,
   onDeleteCandidate,
   onUpdateCandidateName,
-  onUpdateCandidateEmail
+  onUpdateCandidateEmail,
+  selectedLanguage = 'en-US'
 }) => {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
@@ -40,6 +43,8 @@ export const ResumeAnalyzerPage: React.FC<ResumeAnalyzerProps> = ({
 
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [emailInput, setEmailInput] = useState('');
+
+  const t = (key: string) => getTranslation(selectedLanguage, key);
 
   const topMatch = jobMatches[0];
   const finalResult = topMatch ? topMatch.finalResult : 'PASS (NEEDS IMPROVEMENT)';
@@ -136,11 +141,11 @@ export const ResumeAnalyzerPage: React.FC<ResumeAnalyzerProps> = ({
               >
                 {savedSuccess ? (
                   <>
-                    <Check className="w-4 h-4 text-emerald-400" /> Saved to Database!
+                    <Check className="w-4 h-4 text-emerald-400" /> Saved!
                   </>
                 ) : (
                   <>
-                    <Database className="w-4 h-4 text-[var(--color-accent)]" /> Save Candidate Data
+                    <Database className="w-4 h-4 text-[var(--color-accent)]" /> {t('analyzer.saveCandidate')}
                   </>
                 )}
               </button>
@@ -149,14 +154,14 @@ export const ResumeAnalyzerPage: React.FC<ResumeAnalyzerProps> = ({
                 onClick={() => generatePDFReport(candidateProfile, atsAnalysis, jobMatches)}
                 className="flex items-center gap-1.5 px-3.5 py-2 theme-btn-primary font-bold text-xs rounded-xl shadow-md transition-colors"
               >
-                <Download className="w-4 h-4" /> Download PDF
+                <Download className="w-4 h-4" /> {t('analyzer.downloadPdf')}
               </button>
 
               <button
                 onClick={() => setShowEmailModal(true)}
                 className="flex items-center gap-1.5 px-3.5 py-2 theme-btn-primary font-bold text-xs rounded-xl shadow-md transition-colors"
               >
-                <Mail className="w-4 h-4" /> Mail Report
+                <Mail className="w-4 h-4" /> {t('analyzer.mailReport')}
               </button>
             </div>
           </div>
@@ -245,7 +250,7 @@ export const ResumeAnalyzerPage: React.FC<ResumeAnalyzerProps> = ({
         <div className="space-y-4">
           <h3 className="text-lg font-bold text-white flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-[var(--color-accent)]" />
-            ATS Optimization & Keyword Audit
+            {t('analyzer.atsScore')}
           </h3>
           <ATSScoreCard ats={atsAnalysis} />
         </div>

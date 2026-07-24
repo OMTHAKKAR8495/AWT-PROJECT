@@ -17,6 +17,7 @@ import {
   MessageSquareCode,
   Database
 } from 'lucide-react';
+import { LANGUAGE_OPTIONS, getTranslation, type SupportedLanguage } from '../data/translations';
 
 interface NavbarProps {
   activeTab: string;
@@ -25,6 +26,8 @@ interface NavbarProps {
   setDarkMode: (val: boolean) => void;
   activeTheme?: string;
   setActiveTheme?: (theme: string) => void;
+  selectedLanguage: SupportedLanguage;
+  setSelectedLanguage: (lang: SupportedLanguage) => void;
   openSearch: () => void;
   openJobModalWithCategory?: (category: string) => void;
 }
@@ -36,13 +39,16 @@ export const Navbar: React.FC<NavbarProps> = ({
   setDarkMode,
   activeTheme = 'violet',
   setActiveTheme = () => {},
+  selectedLanguage,
+  setSelectedLanguage,
   openSearch
 }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langModalOpen, setLangModalOpen] = useState(false);
   const [themeModalOpen, setThemeModalOpen] = useState(false);
-  const [selectedLang, setSelectedLang] = useState('English (US)');
+
+  const t = (key: string) => getTranslation(selectedLanguage, key);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,15 +63,15 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'about', label: 'About Us' },
-    { id: 'services', label: 'Divisions' },
-    { id: 'careers', label: 'Careers', badge: 'Hiring' },
-    { id: 'resume-analyzer', label: 'Resume Analyzer', icon: FileCheck, badge: 'AI' },
-    { id: 'job-matches', label: 'AI Job Matches', icon: Target },
-    { id: 'interview-studio', label: 'Interview Studio', icon: MessageSquareCode },
-    { id: 'candidate-db', label: 'Database', icon: Database },
-    { id: 'contact', label: 'Contact' }
+    { id: 'home', label: t('nav.home') },
+    { id: 'about', label: t('nav.about') },
+    { id: 'services', label: t('nav.divisions') },
+    { id: 'careers', label: t('nav.careers'), badge: t('nav.hiringBadge') },
+    { id: 'resume-analyzer', label: t('nav.resumeAnalyzer'), icon: FileCheck, badge: 'AI' },
+    { id: 'job-matches', label: t('nav.jobMatches'), icon: Target },
+    { id: 'interview-studio', label: t('nav.interviewStudio'), icon: MessageSquareCode },
+    { id: 'candidate-db', label: t('nav.database'), icon: Database },
+    { id: 'contact', label: t('nav.contact') }
   ];
 
   const themePresets = [
@@ -76,14 +82,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'obsidian', name: 'Midnight Titanium & Silver', color1: '#38bdf8', color2: '#e2e8f0', badge: 'Minimal' },
   ];
 
-  const languages = [
-    { name: 'English (US)', flag: '🇺🇸' },
-    { name: 'English (UK)', flag: '🇬🇧' },
-    { name: 'Deutsch (Germany)', flag: '🇩🇪' },
-    { name: 'Français (France)', flag: '🇫🇷' },
-    { name: '日本語 (Japan)', flag: '🇯🇵' },
-    { name: 'Español (LatAm)', flag: '🇪🇸' },
-  ];
+  const currentLangOption = LANGUAGE_OPTIONS.find(l => l.code === selectedLanguage) || LANGUAGE_OPTIONS[0];
 
   return (
     <>
@@ -92,17 +91,17 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[var(--color-badge-bg)] text-[var(--color-badge-text)] border border-[var(--color-badge-border)]">
-              Nexus AI Integration 2026
+              Nexus AI 2026
             </span>
             <p className="text-slate-300 truncate">
-              Unified Portal with AI Resume Analyzer, ATS Evaluation & Job Matching.
+              {t('nav.topNotice')}
             </p>
           </div>
           <button 
             onClick={() => setActiveTab('resume-analyzer')}
             className="flex items-center gap-1 text-[var(--color-accent)] hover:text-white font-medium transition-colors text-xs group"
           >
-            Launch Resume Analyzer 
+            {t('nav.launchAnalyzer')} 
             <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </button>
         </div>
@@ -177,7 +176,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               title="Search Portal (Ctrl+K)"
             >
               <Search className="w-3.5 h-3.5 text-[var(--color-accent)]" />
-              <span className="hidden xl:inline">Search...</span>
+              <span className="hidden xl:inline">{t('nav.search')}</span>
             </button>
 
             {/* Theme Selector Button */}
@@ -199,10 +198,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 setLangModalOpen(!langModalOpen);
                 setThemeModalOpen(false);
               }}
-              className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors relative"
-              title="Language / Region"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-200 bg-[var(--color-bg-surface)] hover:bg-white/10 border border-[var(--color-border)] transition-colors relative"
+              title="Select Language & Region"
             >
-              <Globe className="w-4 h-4 text-slate-300" />
+              <span>{currentLangOption.flag}</span>
+              <span className="hidden md:inline">{currentLangOption.name}</span>
             </button>
 
             {/* Dark/Light Mode Toggle */}
@@ -224,12 +224,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="flex items-center gap-1.5 theme-btn-primary font-semibold text-xs px-3.5 py-2 rounded-lg shadow-lg"
             >
               <FileCheck className="w-3.5 h-3.5" />
-              AI Resume Match
+              {t('nav.resumeAnalyzer')}
             </button>
           </div>
 
           {/* Mobile Menu Trigger */}
           <div className="flex items-center gap-2 lg:hidden">
+            <button
+              onClick={() => setLangModalOpen(!langModalOpen)}
+              className="p-2 rounded-lg text-slate-300 hover:bg-white/10 text-xs font-bold"
+            >
+              {currentLangOption.flag}
+            </button>
+
             <button
               onClick={() => setThemeModalOpen(!themeModalOpen)}
               className="p-2 rounded-lg text-slate-300 hover:bg-white/10"
@@ -309,31 +316,44 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Language Popup */}
       {langModalOpen && (
-        <div className="fixed top-16 right-16 z-50 bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-2xl rounded-xl p-3 w-64 glass-panel animate-in fade-in zoom-in-95">
-          <div className="text-xs font-semibold text-slate-400 px-3 py-1 uppercase tracking-wider">
-            Select Language & Region
+        <div className="fixed top-16 right-16 z-50 bg-[var(--color-bg-surface)] border border-[var(--color-border)] shadow-2xl rounded-2xl p-4 w-72 glass-panel animate-in fade-in zoom-in-95">
+          <div className="flex items-center justify-between px-1 pb-2 border-b border-[var(--color-border)] mb-3">
+            <span className="text-xs font-bold text-slate-200 flex items-center gap-2">
+              <Globe className="w-4 h-4 text-[var(--color-accent)]" />
+              SELECT LANGUAGE & REGION
+            </span>
+            <button 
+              onClick={() => setLangModalOpen(false)}
+              className="text-slate-400 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
-          <div className="mt-2 space-y-1">
-            {languages.map((lang) => (
-              <button
-                key={lang.name}
-                onClick={() => {
-                  setSelectedLang(lang.name);
-                  setLangModalOpen(false);
-                }}
-                className={`w-full text-left px-3 py-2 text-xs rounded-lg flex items-center justify-between ${
-                  selectedLang === lang.name 
-                    ? 'bg-[var(--color-badge-bg)] text-[var(--color-badge-text)] font-semibold border border-[var(--color-badge-border)]' 
-                    : 'text-slate-300 hover:bg-white/5'
-                }`}
-              >
-                <span className="flex items-center gap-2">
-                  <span>{lang.flag}</span>
-                  <span>{lang.name}</span>
-                </span>
-                {selectedLang === lang.name && <ShieldCheck className="w-3.5 h-3.5 text-[var(--color-accent)]" />}
-              </button>
-            ))}
+
+          <div className="space-y-1.5">
+            {LANGUAGE_OPTIONS.map((lang) => {
+              const isSelected = selectedLanguage === lang.code;
+              return (
+                <button
+                  key={lang.code}
+                  onClick={() => {
+                    setSelectedLanguage(lang.code);
+                    setLangModalOpen(false);
+                  }}
+                  className={`w-full text-left px-3.5 py-2.5 rounded-xl flex items-center justify-between transition-all ${
+                    isSelected 
+                      ? 'bg-[var(--color-badge-bg)] text-[var(--color-badge-text)] font-bold border border-[var(--color-badge-border)] shadow-md' 
+                      : 'text-slate-300 hover:bg-white/5 hover:text-white border border-transparent'
+                  }`}
+                >
+                  <span className="flex items-center gap-3 text-xs font-semibold">
+                    <span className="text-lg">{lang.flag}</span>
+                    <span>{lang.name}</span>
+                  </span>
+                  {isSelected && <ShieldCheck className="w-4 h-4 text-[var(--color-accent)] shrink-0" />}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -370,7 +390,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="w-full flex items-center justify-center gap-2 bg-[var(--color-bg-surface)] text-slate-200 py-2.5 rounded-xl border border-[var(--color-border)] font-medium text-xs"
             >
               <Search className="w-4 h-4 text-[var(--color-accent)]" />
-              Search Global Portal
+              {t('nav.search')}
             </button>
 
             <button
@@ -381,7 +401,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="w-full flex items-center justify-center gap-2 theme-btn-primary py-3 rounded-xl font-bold text-xs shadow-xl"
             >
               <FileCheck className="w-4 h-4" />
-              Launch Resume Analyzer
+              {t('nav.launchAnalyzer')}
             </button>
           </div>
         </div>

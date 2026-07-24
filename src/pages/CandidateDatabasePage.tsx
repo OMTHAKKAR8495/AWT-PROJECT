@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
 import { Database, Trash2, Search, Award } from 'lucide-react';
 import type { SavedCandidateRecord, CandidateProfile } from '../types/resume';
+import { getTranslation, type SupportedLanguage } from '../data/translations';
 
 interface CandidateDatabasePageProps {
   candidates: SavedCandidateRecord[];
   onSelectCandidate: (profile: CandidateProfile) => void;
   onDeleteCandidate: (id: string) => void;
+  selectedLanguage?: SupportedLanguage;
 }
 
 export const CandidateDatabasePage: React.FC<CandidateDatabasePageProps> = ({
   candidates,
   onSelectCandidate,
-  onDeleteCandidate
+  onDeleteCandidate,
+  selectedLanguage = 'en-US'
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
+
+  const t = (key: string) => getTranslation(selectedLanguage, key);
 
   const filtered = candidates.filter(c =>
     c.candidateName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -28,10 +33,10 @@ export const CandidateDatabasePage: React.FC<CandidateDatabasePageProps> = ({
         <div>
           <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
             <Database className="w-6 h-6 text-[var(--color-accent)]" />
-            Candidate Records & Evaluation Database
+            {t('db.title')}
           </h2>
           <p className="text-xs text-slate-400 mt-1">
-            Store and retrieve candidate evaluations, extracted skill profiles, and hiring decisions.
+            {t('db.subtitle')}
           </p>
         </div>
 
@@ -39,7 +44,7 @@ export const CandidateDatabasePage: React.FC<CandidateDatabasePageProps> = ({
           <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
           <input
             type="text"
-            placeholder="Search candidates by name or skill..."
+            placeholder={t('db.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full bg-[var(--color-bg-dark)] border border-[var(--color-border)] rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[var(--color-accent)]"

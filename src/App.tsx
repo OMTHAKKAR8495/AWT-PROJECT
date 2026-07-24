@@ -15,6 +15,7 @@ import { CandidateDatabasePage } from './pages/CandidateDatabasePage';
 
 import type { Job } from './types';
 import type { CandidateProfile, ATSAnalysis, JobMatchResult, SavedCandidateRecord, JobRole } from './types/resume';
+import type { SupportedLanguage } from './data/translations';
 import { SAMPLE_RESUMES } from './data/sampleResumes';
 import { parseResumeText, evaluateATS } from './utils/resumeParser';
 import { matchResumeWithJobs } from './utils/jobMatcher';
@@ -26,6 +27,11 @@ export function App() {
   const [activeTheme, setActiveTheme] = useState<string>(() => {
     return localStorage.getItem('portal_theme') || 'violet';
   });
+
+  const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguage>(() => {
+    return (localStorage.getItem('portal_lang') as SupportedLanguage) || 'en-US';
+  });
+
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
 
@@ -62,6 +68,11 @@ export function App() {
     localStorage.setItem('portal_theme', activeTheme);
   }, [darkMode, activeTheme]);
 
+  // Persist language selection
+  useEffect(() => {
+    localStorage.setItem('portal_lang', selectedLanguage);
+  }, [selectedLanguage]);
+
   // Keyboard shortcut Cmd/Ctrl + K for search modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -84,7 +95,6 @@ export function App() {
     setAtsAnalysis(ats);
     setJobMatches(matches);
 
-    // Auto-save candidate
     const updated = saveCandidateRecord(profile, ats, matches);
     setSavedCandidates(updated);
   };
@@ -158,6 +168,8 @@ export function App() {
         setDarkMode={setDarkMode}
         activeTheme={activeTheme}
         setActiveTheme={setActiveTheme}
+        selectedLanguage={selectedLanguage}
+        setSelectedLanguage={setSelectedLanguage}
         openSearch={() => setSearchOpen(true)}
       />
 
@@ -175,6 +187,7 @@ export function App() {
           <CareersPage 
             onSelectJob={(job) => setSelectedJob(job)} 
             setActiveTab={handleTabChange}
+            selectedLanguage={selectedLanguage}
           />
         )}
 
@@ -198,6 +211,7 @@ export function App() {
             onDeleteCandidate={handleDeleteCandidate}
             onUpdateCandidateName={handleUpdateCandidateName}
             onUpdateCandidateEmail={handleUpdateCandidateEmail}
+            selectedLanguage={selectedLanguage}
           />
         )}
 
@@ -205,6 +219,7 @@ export function App() {
           <JobMatchesPage
             jobMatches={jobMatches}
             onSelectForInterview={handleSelectForInterview}
+            selectedLanguage={selectedLanguage}
           />
         )}
 
@@ -220,6 +235,7 @@ export function App() {
             candidates={savedCandidates}
             onSelectCandidate={handleSelectPreset}
             onDeleteCandidate={handleDeleteCandidate}
+            selectedLanguage={selectedLanguage}
           />
         )}
       </main>

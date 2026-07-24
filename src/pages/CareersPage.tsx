@@ -25,20 +25,23 @@ import {
 } from 'lucide-react';
 import { JOBS_LIST, LIFE_AT_NEXUS_PERKS } from '../data/mockData';
 import type { Job, DepartmentCategory, WorkMode } from '../types';
+import { getTranslation, type SupportedLanguage } from '../data/translations';
 
 interface CareersPageProps {
   onSelectJob: (job: Job) => void;
   setActiveTab?: (tab: string) => void;
+  selectedLanguage?: SupportedLanguage;
 }
 
-export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActiveTab }) => {
+export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActiveTab, selectedLanguage = 'en-US' }) => {
   const [selectedDept, setSelectedDept] = useState<DepartmentCategory>('All');
   const [selectedWorkMode, setSelectedWorkMode] = useState<WorkMode>('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [trackingIdInput, setTrackingIdInput] = useState('');
   const [trackerResult, setTrackerResult] = useState<string | null>(null);
 
-  // Department Icon Map
+  const t = (key: string) => getTranslation(selectedLanguage, key);
+
   const getDeptIcon = (dept: string) => {
     switch (dept) {
       case 'Software & AI': return <Cpu className="w-4 h-4" />;
@@ -55,7 +58,6 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
     }
   };
 
-  // Categories list for filtering
   const categories: DepartmentCategory[] = [
     'All',
     'Software & AI',
@@ -70,7 +72,6 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
     'Product & UX Design'
   ];
 
-  // Filtering Logic
   const filteredJobs = JOBS_LIST.filter(job => {
     const matchesDept = selectedDept === 'All' || job.department === selectedDept;
     const matchesMode = selectedWorkMode === 'All' || job.workMode === selectedWorkMode;
@@ -109,11 +110,11 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-display font-extrabold text-white tracking-tight">
-            We Are Hiring Across <span className="gradient-text">ALL Fields & Disciplines</span>
+            {t('hero.title')}
           </h1>
 
           <p className="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed">
-            Nexus Dynamics is expanding its global workforce of 124,000+. Explore open opportunities in <strong className="text-[var(--color-accent)]">Software & AI, Engineering, Finance, Biotech, Marketing, HR, Legal, Operations, Sales, and Design</strong> across North America, Europe, Asia-Pacific, and Remote.
+            {t('hero.subtitle')}
           </p>
 
           {/* Direct CTA Button for Resume Analyzer */}
@@ -123,7 +124,7 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
               className="theme-btn-primary font-bold text-sm px-6 py-3.5 rounded-xl shadow-xl flex items-center justify-center gap-2.5 transition-all transform hover:scale-105"
             >
               <Sparkles className="w-4 h-4 text-amber-300 animate-bounce" />
-              <span>AI Resume Analyzer & Suitable Job Matcher</span>
+              <span>{t('hero.aiButton')}</span>
               <FileText className="w-4 h-4" />
             </button>
           </div>
@@ -132,15 +133,15 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
           <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs font-medium text-slate-300">
             <div className="flex items-center gap-2 bg-[var(--color-bg-surface)] px-4 py-2 rounded-xl border border-[var(--color-border)]">
               <Briefcase className="w-4 h-4 text-[var(--color-accent)]" />
-              <span><strong>200+</strong> Open Jobs</span>
+              <span>{t('hero.openJobs')}</span>
             </div>
             <div className="flex items-center gap-2 bg-[var(--color-bg-surface)] px-4 py-2 rounded-xl border border-[var(--color-border)]">
               <Globe className="w-4 h-4 text-emerald-400" />
-              <span><strong>65+</strong> Operating Countries</span>
+              <span>{t('hero.operatingCountries')}</span>
             </div>
             <div className="flex items-center gap-2 bg-[var(--color-bg-surface)] px-4 py-2 rounded-xl border border-[var(--color-border)]">
               <Heart className="w-4 h-4 text-pink-400" />
-              <span><strong>Top 10</strong> Global Employer 2026</span>
+              <span>{t('hero.globalEmployer')}</span>
             </div>
           </div>
 
@@ -157,10 +158,10 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
                 AI Resume Matching Engine
               </div>
               <h2 className="text-2xl sm:text-3xl font-display font-bold text-white">
-                Resume Analyzer & Smart Job Matcher
+                {t('analyzer.title')}
               </h2>
               <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
-                Not sure which job fits your qualifications? Upload your resume to our AI Resume Analyzer to instantly scan your skill set and find the perfect matching career opportunities.
+                {t('analyzer.subtitle')}
               </p>
             </div>
 
@@ -169,7 +170,7 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
               className="theme-btn-primary font-extrabold text-sm px-8 py-4 rounded-2xl shadow-2xl whitespace-nowrap flex items-center gap-3 transition-all transform hover:scale-105 shrink-0 text-white"
             >
               <FileText className="w-5 h-5 text-white" />
-              <span>Launch Resume Analyzer</span>
+              <span>{t('nav.launchAnalyzer')}</span>
               <ExternalLink className="w-4 h-4 opacity-80" />
             </button>
           </div>
@@ -295,7 +296,6 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
                     {job.description}
                   </p>
 
-                  {/* Requirements Snippet */}
                   <div className="bg-[var(--color-bg-dark)]/80 p-3 rounded-xl border border-[var(--color-border)] space-y-1">
                     <div className="text-[10px] uppercase font-bold text-slate-500">Key Requirement</div>
                     <div className="text-xs text-slate-300 truncate">
@@ -304,7 +304,6 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
                   </div>
                 </div>
 
-                {/* Card Bottom CTA */}
                 <div className="pt-4 border-t border-[var(--color-border)] flex items-center justify-between">
                   <span className="text-[11px] text-slate-500">
                     Posted {job.postedDate}

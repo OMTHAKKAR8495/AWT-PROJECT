@@ -3,17 +3,22 @@ import { Target, Sparkles, Filter } from 'lucide-react';
 import type { JobMatchResult } from '../types/resume';
 import { JobMatchCard } from '../components/JobMatchCard';
 import { SkillGapChart } from '../components/SkillGapChart';
+import { getTranslation, type SupportedLanguage } from '../data/translations';
 
 interface JobMatchesPageProps {
   jobMatches: JobMatchResult[];
   onSelectForInterview: (match: JobMatchResult) => void;
+  selectedLanguage?: SupportedLanguage;
 }
 
 export const JobMatchesPage: React.FC<JobMatchesPageProps> = ({
   jobMatches,
-  onSelectForInterview
+  onSelectForInterview,
+  selectedLanguage = 'en-US'
 }) => {
   const [filter, setFilter] = useState<'All' | 'High Match' | 'Good Fit' | 'Eligible Only'>('All');
+
+  const t = (key: string) => getTranslation(selectedLanguage, key);
 
   const filteredMatches = jobMatches.filter(m => {
     if (filter === 'High Match') return m.matchLevel === 'High Match';
@@ -38,10 +43,10 @@ export const JobMatchesPage: React.FC<JobMatchesPageProps> = ({
           </div>
 
           <h2 className="text-2xl font-extrabold text-white mt-1">
-            Job Match & Official Company Eligibility Results
+            {t('jobMatches.title')}
           </h2>
           <p className="text-xs text-slate-400 mt-1">
-            Calculates skills overlap, required degree compliance, and minimum experience thresholds.
+            {t('jobMatches.subtitle')}
           </p>
         </div>
 
