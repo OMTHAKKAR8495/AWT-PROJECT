@@ -9,8 +9,7 @@ import {
   Mail,
   Zap,
   Award,
-  Database,
-  Building2
+  Database
 } from 'lucide-react';
 import type { CandidateProfile, ATSAnalysis, JobMatchResult } from '../types/resume';
 import { EmailReportModal } from './EmailReportModal';
@@ -67,7 +66,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <nav className="hidden md:flex items-center gap-1 bg-slate-900/60 p-1.5 rounded-xl border border-slate-800">
             {[
-              { id: 'portal', label: 'Company Portal', icon: Building2 },
               { id: 'dashboard', label: 'Dashboard', icon: Zap },
               { id: 'analyzer', label: 'Resume Analyzer', icon: FileText },
               { id: 'jobs', label: 'Job Matches', icon: Briefcase },
@@ -139,9 +137,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      <div className="md:hidden flex items-center justify-around border-t border-slate-800/80 px-2 py-2 bg-slate-950/90 overflow-x-auto">
+      <div className="md:hidden flex items-center justify-around border-t border-slate-800/80 px-2 py-2 bg-slate-950/90">
         {[
-          { id: 'portal', label: 'Portal', icon: Building2 },
           { id: 'dashboard', label: 'Dash', icon: Zap },
           { id: 'analyzer', label: 'Resume', icon: FileText },
           { id: 'jobs', label: 'Jobs', icon: Briefcase },
@@ -155,7 +152,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] shrink-0 ${
+              className={`flex flex-col items-center gap-1 px-3 py-1 rounded-lg text-[11px] ${
                 isActive ? 'text-sky-400 font-bold' : 'text-slate-400'
               }`}
             >
