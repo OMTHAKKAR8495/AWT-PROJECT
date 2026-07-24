@@ -8,7 +8,7 @@ import jobRoutes from './routes/jobRoutes';
 dotenv.config();
 
 const app = express();
-let PORT = Number(process.env.PORT) || 5000;
+let PORT = Number(process.env.PORT) || 5001;
 
 // Connect to MongoDB Database
 connectDB();
