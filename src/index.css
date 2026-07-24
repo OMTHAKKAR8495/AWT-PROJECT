@@ -22,6 +22,10 @@
   --color-badge-bg: rgba(139, 92, 246, 0.15);
   --color-badge-border: rgba(139, 92, 246, 0.3);
   --color-badge-text: #c084fc;
+  /* Text tokens — dark mode defaults */
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #64748b;
 }
 
 [data-theme="sapphire"] {
@@ -101,59 +105,69 @@
 }
 
 .light {
-  --color-bg-dark: #f8fafc;
+  --color-bg-dark: #f1f5f9;
   --color-bg-surface: #ffffff;
-  --color-bg-card: rgba(255, 255, 255, 0.95);
+  --color-bg-card: rgba(255, 255, 255, 0.97);
   --color-border: rgba(15, 23, 42, 0.12);
   --color-border-hover: var(--color-primary);
   --color-glow: rgba(139, 92, 246, 0.12);
   --color-text-gradient: linear-gradient(135deg, #6b21a8 0%, #0284c7 50%, #4338ca 100%);
+  /* Light mode text tokens — override dark defaults */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #334155;
+  --color-text-muted: #64748b;
 }
 
 @layer base {
   body {
     background-color: var(--color-bg-dark);
-    color: #f8fafc;
+    color: var(--color-text-primary);
     @apply font-sans antialiased transition-colors duration-300;
   }
 }
 
-.light body {
-  background-color: #f8fafc;
-  color: #0f172a;
-}
+/* ══════════════════════════════════════════════════
+   Light Mode: Comprehensive Text & Background Tokens
+   ══════════════════════════════════════════════════ */
 
-/* Light Mode Contrast & Font Color Overrides */
+/* Headings & strong text */
 .light .text-white,
+.light .text-slate-50,
 .light .text-slate-100,
 .light .text-slate-200 {
   color: #0f172a !important;
 }
 
+/* Body text */
 .light .text-slate-300 {
+  color: #1e293b !important;
+}
+
+/* Secondary text */
+.light .text-slate-400 {
   color: #334155 !important;
 }
 
-.light .text-slate-400 {
-  color: #475569 !important;
-}
-
+/* Muted text */
 .light .text-slate-500 {
   color: #64748b !important;
 }
 
+/* Very muted */
+.light .text-slate-600 {
+  color: #64748b !important;
+}
+
+/* Dark backgrounds → light surfaces */
 .light .bg-slate-950,
 .light .bg-slate-900,
-.light .bg-slate-900\/90,
-.light .bg-slate-900\/80,
-.light .bg-slate-900\/60,
-.light .bg-slate-900\/40 {
+.light [class*="bg-slate-900"] {
   background-color: #ffffff !important;
   color: #0f172a !important;
 }
 
 .light .bg-slate-800,
-.light .bg-slate-800\/80 {
+.light [class*="bg-slate-800"] {
   background-color: #f1f5f9 !important;
   color: #0f172a !important;
 }
@@ -163,6 +177,7 @@
   border-color: #cbd5e1 !important;
 }
 
+/* Form elements */
 .light input,
 .light textarea,
 .light select {
@@ -174,6 +189,13 @@
 .light input::placeholder,
 .light textarea::placeholder {
   color: #94a3b8 !important;
+}
+
+/* Inline code/pre blocks */
+.light pre,
+.light code {
+  background-color: #f1f5f9 !important;
+  color: #1e293b !important;
 }
 
 /* Custom Scrollbar */
@@ -267,3 +289,128 @@
 .animate-pulse-glow {
   animation: pulseGlow 4s infinite ease-in-out;
 }
+
+/* ── More dropdown entrance animation ── */
+@keyframes dropIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1); }
+}
+
+.dropdown-panel {
+  animation: dropIn 0.22s cubic-bezier(0.34, 1.3, 0.64, 1) forwards;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   NAV ITEM — Magnetic Pop-Out Hover Effect
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes shimmerSlide {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes navPop {
+  0%   { transform: translateY(0) scale(1); }
+  40%  { transform: translateY(-5px) scale(1.08); }
+  70%  { transform: translateY(-3px) scale(1.06); }
+  100% { transform: translateY(-4px) scale(1.07); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0px 0px var(--color-glow), 0 6px 20px -4px var(--color-glow); }
+  50%       { box-shadow: 0 0 18px 4px var(--color-glow), 0 8px 28px -4px var(--color-primary); }
+}
+
+.nav-item {
+  position: relative;
+  overflow: hidden;
+  transition: color 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  transform-origin: center bottom;
+  will-change: transform;
+}
+
+/* Shimmering underline bar */
+.nav-item::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 80%;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--color-btn-gradient);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Hover spotlight sweep */
+.nav-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255,255,255,0.10) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  background-position: -200% center;
+  transition: none;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.nav-item:hover {
+  color: #ffffff !important;
+  animation: navPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+             glowPulse 1.8s ease-in-out 0.35s infinite;
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.15) !important;
+}
+
+.nav-item:hover::before {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.nav-item:hover::after {
+  animation: shimmerSlide 0.55s ease forwards;
+}
+
+/* Active nav item — always glowing */
+.nav-item.nav-active {
+  animation: glowPulse 2.5s ease-in-out infinite;
+}
+
+/* Text inside nav-item gets gradient shimmer on hover */
+.nav-item:hover span {
+  background: var(--color-text-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* But keep gradient-free for active (already has solid bg) */
+.nav-item.nav-active:hover span,
+.nav-item.nav-active span {
+  background: none;
+  -webkit-text-fill-color: #fff;
+}
+
+/* Icon pop on hover */
+.nav-item:hover svg {
+  transform: scale(1.25) rotate(-8deg);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--color-accent) !important;
+}
+
+/* Light mode adjustments */
+.light .nav-item:hover {
+  background: rgba(0,0,0,0.06) !important;
+}
+
+.light .nav-item:hover span {
+  -webkit-text-fill-color: transparent;
+}
+

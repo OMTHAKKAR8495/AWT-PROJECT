@@ -102,7 +102,7 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
       
       {/* CAREERS HERO BANNER */}
       <section className="relative pt-12 pb-16 hero-glow border-b border-[var(--color-border)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+        <div className="max-w-[1700px] mx-auto px-4 sm:px-8 lg:px-12 text-center space-y-4">
           
           <div className="inline-flex items-center gap-2 bg-[var(--color-badge-bg)] border border-[var(--color-badge-border)] px-4 py-1.5 rounded-full text-xs font-bold text-[var(--color-badge-text)]">
             <Sparkles className="w-4 h-4 text-[var(--color-accent)] animate-pulse" />
@@ -149,7 +149,7 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
       </section>
 
       {/* AI RESUME ANALYZER HIGHLIGHT BANNER */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-[1700px] mx-auto px-4 sm:px-8 lg:px-12">
         <div className="glass-panel p-8 sm:p-10 rounded-3xl border border-[var(--color-border)] relative overflow-hidden shadow-2xl bg-gradient-to-r from-[var(--color-bg-surface)] via-[var(--color-badge-bg)] to-[var(--color-bg-surface)]">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="space-y-3 text-center lg:text-left">
@@ -178,7 +178,7 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
       </section>
 
       {/* DEPARTMENT FIELD SELECTOR TABS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <section className="max-w-[1700px] mx-auto px-4 sm:px-8 lg:px-12 space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-display font-bold text-white">
@@ -214,7 +214,7 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
       </section>
 
       {/* SEARCH AND FILTERS BAR */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-[1700px] mx-auto px-4 sm:px-8 lg:px-12">
         <div className="bg-[var(--color-bg-surface)] p-4 rounded-2xl border border-[var(--color-border)] flex flex-col md:flex-row items-center gap-4">
           
           {/* Keyword Search */}
@@ -249,7 +249,7 @@ export const CareersPage: React.FC<CareersPageProps> = ({ onSelectJob, setActive
       </section>
 
       {/* JOB LISTINGS GRID */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-[1700px] mx-auto px-4 sm:px-8 lg:px-12">
         {filteredJobs.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredJobs.map((job) => (

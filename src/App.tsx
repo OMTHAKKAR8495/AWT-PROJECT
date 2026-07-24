@@ -3,6 +3,7 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { JobModal } from './components/JobModal';
 import { SearchModal } from './components/SearchModal';
+import { EmailReportModal } from './components/EmailReportModal';
 import { HomePage } from './pages/HomePage';
 import { AboutUsPage } from './pages/AboutUsPage';
 import { CareersPage } from './pages/CareersPage';
@@ -53,6 +54,13 @@ export function App() {
   );
 
   const [selectedJobForInterview, setSelectedJobForInterview] = useState<JobRole | undefined>(undefined);
+
+  // Email modal state — triggered from candidate DB
+  const [emailTarget, setEmailTarget] = useState<{
+    profile: CandidateProfile;
+    ats: ATSAnalysis;
+    jobMatches: JobMatchResult[];
+  } | null>(null);
 
   // Sync Dark/Light & Color Theme attribute to html root element
   useEffect(() => {
@@ -235,6 +243,11 @@ export function App() {
             candidates={savedCandidates}
             onSelectCandidate={handleSelectPreset}
             onDeleteCandidate={handleDeleteCandidate}
+            onEmailCandidate={(record) => setEmailTarget({
+              profile: record.profile,
+              ats: record.ats,
+              jobMatches: record.jobMatches
+            })}
             selectedLanguage={selectedLanguage}
           />
         )}
@@ -258,6 +271,16 @@ export function App() {
         onSelectJob={(job) => setSelectedJob(job)}
         setActiveTab={handleTabChange}
       />
+
+      {/* Email Report Modal — triggered from Candidate DB */}
+      {emailTarget && (
+        <EmailReportModal
+          profile={emailTarget.profile}
+          ats={emailTarget.ats}
+          jobMatches={emailTarget.jobMatches}
+          onClose={() => setEmailTarget(null)}
+        />
+      )}
 
     </div>
   );

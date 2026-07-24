@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Database, Trash2, Search, Award } from 'lucide-react';
+import { Database, Trash2, Search, Award, Mail } from 'lucide-react';
 import type { SavedCandidateRecord, CandidateProfile } from '../types/resume';
 import { getTranslation, type SupportedLanguage } from '../data/translations';
 
@@ -7,6 +7,7 @@ interface CandidateDatabasePageProps {
   candidates: SavedCandidateRecord[];
   onSelectCandidate: (profile: CandidateProfile) => void;
   onDeleteCandidate: (id: string) => void;
+  onEmailCandidate: (record: SavedCandidateRecord) => void;
   selectedLanguage?: SupportedLanguage;
 }
 
@@ -14,6 +15,7 @@ export const CandidateDatabasePage: React.FC<CandidateDatabasePageProps> = ({
   candidates,
   onSelectCandidate,
   onDeleteCandidate,
+  onEmailCandidate,
   selectedLanguage = 'en-US'
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -111,6 +113,13 @@ export const CandidateDatabasePage: React.FC<CandidateDatabasePageProps> = ({
                     className="theme-btn-primary font-bold text-xs px-3 py-1.5 rounded-lg shadow-md"
                   >
                     View Evaluation
+                  </button>
+                  <button
+                    onClick={() => onEmailCandidate(cand)}
+                    className="p-1.5 text-slate-400 hover:text-[var(--color-accent)] hover:bg-white/10 rounded-lg transition-colors"
+                    title="Email Report"
+                  >
+                    <Mail className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => onDeleteCandidate(cand.id)}
