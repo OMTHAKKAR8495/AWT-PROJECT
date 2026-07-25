@@ -1,0 +1,33 @@
+services:
+  # ── Backend API ──────────────────────────────────────────
+  - type: web
+    name: nexus-backend
+    runtime: node
+    rootDir: Backend
+    buildCommand: npm install
+    startCommand: node src/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5001
+      - key: MONGODB_URI
+        fromDatabase:
+          name: nexus-db
+          property: connectionString
+
+  # ── Frontend (Static Site) ───────────────────────────────
+  - type: web
+    name: nexus-frontend
+    runtime: static
+    rootDir: Frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: nexus-db
+    plan: free
