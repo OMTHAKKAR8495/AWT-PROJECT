@@ -1,6 +1,7 @@
 {
   "name": "careermatch-ai-backend",
   "version": "1.0.0",
+  "license": "MIT",
   "description": "Express.js & MongoDB Backend for CareerMatch AI Resume Analyzer",
   "main": "dist/server.js",
   "scripts": {

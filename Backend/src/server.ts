@@ -18,6 +18,20 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Root Welcome Route
+app.get('/', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: '🚀 CareerMatch AI Express + MongoDB Backend Server is online!',
+    endpoints: {
+      health: '/api/health',
+      candidates: '/api/candidates',
+      jobs: '/api/jobs'
+    },
+    timestamp: new Date()
+  });
+});
+
 // Health Check API
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', service: 'CareerMatch AI MongoDB Express Server', timestamp: new Date() });
